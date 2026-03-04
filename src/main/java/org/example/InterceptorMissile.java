@@ -1,6 +1,11 @@
 package org.example;
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Arc;
+
+import java.util.Objects;
 
 public class InterceptorMissile {
     double x, y;
@@ -46,5 +51,27 @@ public class InterceptorMissile {
         view.setRotate(Math.toDegrees(Math.atan2(dy, dx)));
 
         return false;
+    }
+
+    public  static InterceptorMissile spawnInterceptor(
+            Pane interceptorLayer,
+            Arc sector,
+            AntiRadiationMissile target) {
+
+        double x = sector.getCenterX();
+        double y = sector.getCenterY();
+
+        Image img = new Image("file:E:/диплом/app/armSimulator/src/main/resources/rocket.png"
+        );
+
+        ImageView view = new ImageView(img);
+        view.setFitWidth(24);
+        view.setPreserveRatio(true);
+
+        InterceptorMissile m =
+                new InterceptorMissile(x, y, view, target);
+
+        interceptorLayer.getChildren().add(view);
+        return m;
     }
 }

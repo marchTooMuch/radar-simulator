@@ -54,4 +54,27 @@ class AntiRadiationMissile {
 
         return false;
     }
+
+    public static AntiRadiationMissile spawnMissile(Pane missileLayer, Arc sector) {
+
+        double angle = sector.getStartAngle()
+                + Math.random() * sector.getLength();
+
+        double x = sector.getCenterX()
+                + sector.getRadiusX() * Math.cos(Math.toRadians(angle));
+
+        double y = sector.getCenterY()
+                - sector.getRadiusY() * Math.sin(Math.toRadians(angle));
+
+        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/arm.png"
+        );
+
+        ImageView view = new ImageView(img);
+        view.setFitWidth(28);
+        view.setPreserveRatio(true);
+
+        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view);
+        missileLayer.getChildren().add(view);
+        return m;
+    }
 }
