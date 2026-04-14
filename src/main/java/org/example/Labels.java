@@ -5,6 +5,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Labels {
+    public static Text rocketsLabel;
+
     public static Text createRocketsLabel() {
         Text rocketsLabel = new Text();
         rocketsLabel.setFont(Font.font(18));
@@ -12,7 +14,6 @@ public class Labels {
         rocketsLabel.setX(20);
         rocketsLabel.setY(160);
         rocketsLabel.setText("Ракет в запасе: " + FirstTable.rocketsCount);
-
         return rocketsLabel;
     }
 }

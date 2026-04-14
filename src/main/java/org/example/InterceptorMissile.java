@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class InterceptorMissile {
     double x, y;
-    double speed = 20;
+    double speed = 100;
     ImageView view;
     AntiRadiationMissile target;
 
@@ -58,8 +58,8 @@ public class InterceptorMissile {
             Arc sector,
             AntiRadiationMissile target) {
 
-        double x = sector.getCenterX();
-        double y = sector.getCenterY();
+        double x = sector.getCenterX() - 15;
+        double y = sector.getCenterY() - 20;
 
         Image img = new Image("file:E:/диплом/app/armSimulator/src/main/resources/rocket.png"
         );

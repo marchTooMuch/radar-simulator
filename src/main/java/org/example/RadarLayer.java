@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class RadarLayer {
-    private static final int SECTOR_ANGLE = 60;
+    private static final int SECTOR_ANGLE = 90;
     private static final int LINES_COUNT = 5;
     private static final int MAX_DISTANCE_KM = 140;
 
@@ -40,7 +40,7 @@ public class RadarLayer {
             rangeArc.setStartAngle(startAngle);
             rangeArc.setLength(SECTOR_ANGLE);
             rangeArc.setFill(Color.TRANSPARENT);
-            rangeArc.setStroke(Color.GREEN);
+            rangeArc.setStroke(Color.WHITE);
             rangeArc.setStrokeWidth(1);
 
             rangeArc.centerXProperty().bind(sector.centerXProperty());
@@ -53,7 +53,7 @@ public class RadarLayer {
             // ---- подпись расстояния
             Text label = new Text(String.format("%.0f km", distance));
             label.setFont(Font.font(14));
-            label.setFill(Color.GREEN);
+            label.setFill(Color.WHITE);
 
             // точка начала дуги (ГЕОМЕТРИЧЕСКИ ВЕРНО)
             label.xProperty().bind(

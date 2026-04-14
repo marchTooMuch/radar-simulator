@@ -16,25 +16,9 @@ public class FirstTable {
 
 
     public static void createTable1() {
-        TextInputDialog dialog = new TextInputDialog("5");
-        dialog.setTitle("Настройка ракет");
-        dialog.setHeaderText("Введите количество ракет на вооружении:");
-        dialog.setContentText("Количество ракет:");
         setup = showAttackSetupDialog();
-        rocketsCount = setup.getKey();        // наши ракеты
-        int enemyRocketsCount = setup.getValue();
-
-        dialog.showAndWait().ifPresent(input -> {
-            try {
-                rocketsCount = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                rocketsCount = 5; // значение по умолчанию
-            }
-
-            // создаем начальную запись в таблице
-            radarStats.add(new RadarStat("Ракет в запасе", String.valueOf(rocketsCount)));
-        });
-
+        rocketsCount = setup.getValue();        // наши ракеты
+        radarStats.add(new RadarStat("Ракет в запасе", String.valueOf(rocketsCount)));
     }
 
     private static Pair<Integer, Integer> showAttackSetupDialog() {
@@ -54,9 +38,9 @@ public class FirstTable {
         TextField ourRocketsField = new TextField("5");
         TextField enemyRocketsField = new TextField("5");
 
-        grid.add(new javafx.scene.control.Label("Своих ракет:"), 0, 0);
+        grid.add(new javafx.scene.control.Label("Вражеских ракет:"), 0, 0);
         grid.add(ourRocketsField, 1, 0);
-        grid.add(new javafx.scene.control.Label("Вражеских ракет:"), 0, 1);
+        grid.add(new javafx.scene.control.Label("Своих ракет:"), 0, 1);
         grid.add(enemyRocketsField, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
@@ -66,7 +50,9 @@ public class FirstTable {
             if (dialogButton == ButtonType.OK) {
                 try {
                     int ourRockets = Integer.parseInt(ourRocketsField.getText());
+                    System.out.println("You entered our rockets " + ourRockets);
                     int enemyRockets = Integer.parseInt(enemyRocketsField.getText());
+                    System.out.println("you entered enemy rockets " + enemyRockets);
                     return new Pair<>(ourRockets, enemyRockets);
                 } catch (NumberFormatException e) {
                     return new Pair<>(5, 5); // значения по умолчанию

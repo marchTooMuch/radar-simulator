@@ -2,36 +2,53 @@ package org.example;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Arc;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import static org.example.Labels.rocketsLabel;
+
 public class Main extends Application {
+
+
+
     @Override
     public void start(Stage stage) {
-        Pane root = new Pane();
+        StackPane root = new StackPane();//
         Scene scene = new Scene(root, 1000, 700);
         Arc sector = Sector.create(scene);
-        root.getChildren().add(new RadarLayer(scene,sector).radarLayer);
         FirstTable.createTable1();
-        Text rocketsLabel = Labels.createRocketsLabel();
-        root.getChildren().add(rocketsLabel);
+        rocketsLabel = Labels.createRocketsLabel();
         Pane missileLayer = new Pane();
         Pane interceptorLayer = new Pane();
-        root.getChildren().addAll(missileLayer,interceptorLayer);
-        Button launchButton = Buttons.createLaunchButton();
+        Button launchButton = Buttons.createLaunchButton(root);
         Button radarButton = Buttons.createRadarButton();
-        root.getChildren().add(radarButton);
-        root.getChildren().add(launchButton);
+        Button safeModeButton = Buttons.createSafeModeButton(root);
+        root.setStyle("-fx-background-color: black;");
+        root.setAlignment(rocketsLabel, Pos.TOP_RIGHT);
+        RadarLayer radarLayer = new RadarLayer(scene,sector);
+        root.getChildren().add(radarLayer.radarLayer);
+        root.getChildren().add(rocketsLabel);
+        root.getChildren().addAll(missileLayer,interceptorLayer);
+        root.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
+        root.setAlignment(radarButton, Pos.BOTTOM_LEFT);
+        root.getChildren().addAll(radarButton,launchButton,safeModeButton);
         Buttons.radarOnAddListener();
-        AnimationTimer timer = Buttons.createTimer(sector, missileLayer);
+        AnimationTimer timer = Buttons.createTimer(sector, missileLayer, interceptorLayer);
         timer.start();
-        Buttons.setOnActionLaunchButton(launchButton,interceptorLayer,sector,rocketsLabel);
+        Buttons.setOnActionlaunchRocket(launchButton,interceptorLayer,sector,rocketsLabel);
         Buttons.setOnActionRadarButton(radarButton);
+        Buttons.createSafeModeArc(radarLayer.radarLayer, sector);
+        Buttons.setOnActionSafeButton(safeModeButton,radarLayer.radarLayer);
+
         ObservableList<RadarStat> radarStats = FXCollections.observableArrayList();
         radarStats.add(new RadarStat("Ракет в запасе", "5"));
         for (int i = 0; i < FirstTable.setup.getKey(); i++) {
@@ -40,9 +57,5 @@ public class Main extends Application {
         stage.setTitle("Панель ЗРК — сектор стрельбы");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
