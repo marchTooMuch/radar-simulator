@@ -12,6 +12,14 @@ public class Sector {
     public static Arc create(Scene scene) {
         Arc sector = new Arc();
         sector = new Arc();
+
+        scene.setOnMouseMoved(e -> {
+            System.out.println("X: " + e.getX() + " Y: " + e.getY());
+        });
+
+
+        sector.setStyle("-fx-background-color: transparent;");
+
         sector.setType(ArcType.ROUND);
         sector.setStartAngle(90 - SECTOR_ANGLE / 2);
         sector.setLength(SECTOR_ANGLE);
@@ -25,7 +33,6 @@ public class Sector {
         // Радиусы
         sector.radiusXProperty().bind(scene.widthProperty().multiply(0.48));
         sector.radiusYProperty().bind(scene.heightProperty().multiply(0.9));
-
         return sector;
     }
 

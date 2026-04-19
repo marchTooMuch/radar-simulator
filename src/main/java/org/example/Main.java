@@ -18,13 +18,13 @@ import static org.example.Labels.rocketsLabel;
 
 public class Main extends Application {
 
-
-
     @Override
     public void start(Stage stage) {
+        Tab76.range = -1;
         StackPane root = new StackPane();//
         Scene scene = new Scene(root, 1000, 700);
         Arc sector = Sector.create(scene);
+
         FirstTable.createTable1();
         rocketsLabel = Labels.createRocketsLabel();
         Pane missileLayer = new Pane();
@@ -32,15 +32,20 @@ public class Main extends Application {
         Button launchButton = Buttons.createLaunchButton(root);
         Button radarButton = Buttons.createRadarButton();
         Button safeModeButton = Buttons.createSafeModeButton(root);
+        Button tab76Button = Buttons.createTab76Button(root);
+        Button trackAmplificationData = Buttons.createTrackAmplificationButton(root);
         root.setStyle("-fx-background-color: black;");
         root.setAlignment(rocketsLabel, Pos.TOP_RIGHT);
         RadarLayer radarLayer = new RadarLayer(scene,sector);
+
+
+
         root.getChildren().add(radarLayer.radarLayer);
         root.getChildren().add(rocketsLabel);
         root.getChildren().addAll(missileLayer,interceptorLayer);
         root.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
         root.setAlignment(radarButton, Pos.BOTTOM_LEFT);
-        root.getChildren().addAll(radarButton,launchButton,safeModeButton);
+        root.getChildren().addAll(radarButton,launchButton,safeModeButton,tab76Button, trackAmplificationData);
         Buttons.radarOnAddListener();
         AnimationTimer timer = Buttons.createTimer(sector, missileLayer, interceptorLayer);
         timer.start();

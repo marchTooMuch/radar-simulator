@@ -13,7 +13,7 @@ public class Labels {
         rocketsLabel.setFill(Color.LIME);
         rocketsLabel.setX(20);
         rocketsLabel.setY(160);
-        rocketsLabel.setText("Ракет в запасе: " + FirstTable.rocketsCount);
+        rocketsLabel.setText("Rockets count: " + FirstTable.rocketsCount);
         return rocketsLabel;
     }
 }

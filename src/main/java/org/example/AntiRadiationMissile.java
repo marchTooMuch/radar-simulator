@@ -1,6 +1,6 @@
 package org.example;
 
-import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -10,37 +10,51 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 
-class AntiRadiationMissile {
+public class AntiRadiationMissile {
     public static int count = 1;
     int id;
     double x, y;
-    double speed = 10;
+    double speed = 5 ;
     ImageView view;
+    ImageView view2;
     Text label;
+    IntegerProperty distanceInKm = new SimpleIntegerProperty();
 //    double angle;    // угол в градусах
 //    double fraction;
-    double distance;
+    DoubleProperty distance = new SimpleDoubleProperty();
+    IntegerProperty height = new SimpleIntegerProperty();
     double lastDx = 0;
     double lastDy = 0;
     boolean isEngaged = false;
 
-    AntiRadiationMissile(double x, double y, ImageView view) {
+
+    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, int height) {
         this.x = x;
         this.y = y;
-        this.view = view;
+        this.view = view1;
+        this.view2 = view2;
         view.setTranslateX(x);
         view.setTranslateY(y);
         id = count++;
         label = new Text(String.valueOf(id));
         label.setFill(Color.RED);
         label.setFont(Font.font(14));
+        this.height.setValue(height);
 //        fraction = 1;
 
     }
 
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer) {
-        distance = AntiRadiationMissile.getDistance(sector, x, y);
-        if(Buttons.safeModeOn.get() == false && distance <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
+    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+        if(distanceInKm.getValue() <= Tab76.range ) {
+            view.setVisible(false);
+            view = view2;
+            view.setVisible(true);
+        }
+
+        distance.set(AntiRadiationMissile.getDistance(sector, x, y));
+       // distanceInKm.set((int)((600 * distance.get()) / 140));
+        distanceInKm.set((int)( (distance.get() * 140) / 600 ));
+        if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
             isEngaged = true;
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
@@ -91,12 +105,22 @@ class AntiRadiationMissile {
 
         Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/arm.png"
         );
+        Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
+        );
         ImageView view = new ImageView(img);
+        ImageView view2 = new ImageView(img2);
         view.setFitWidth(28);
         view.setPreserveRatio(true);
-        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view);
+        view2.setFitWidth(28);
+        view2.setPreserveRatio(true);
+        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view, view2, 25000);
 //        m.angle = angle;
-        missileLayer.getChildren().add(view);
+        missileLayer.getChildren().addAll(view,view2);
+        
+
+
+
+        view2.setVisible(false);
         //создаем текст номера ракеты
         Text label = m.label;
         label.setFill(Color.RED);
@@ -135,4 +159,37 @@ class AntiRadiationMissile {
         FirstTable.radarStats.set(0, FirstTable.radarStats.get(0)); // триггер для TableView
     }
 
+    public Double getDistance() {
+        return distance.get();
+    }
+    public Integer getDistanceInKm() {
+        return distanceInKm.get();
+    }
+    public Integer getHeight() {
+        return height.get();
+    }
+
+    public void setDistance(double value) {
+        distance.set(value);
+    }
+    public void setDistanceInKm(int value) {
+        distanceInKm.set(value);
+    }
+    public void setHeight(int value) {
+        height.set(value);
+    }
+
+    public DoubleProperty distanceProperty() {
+        return distance;
+    }
+    public IntegerProperty distanceInKmProperty() {
+        return distanceInKm;
+    }
+    public IntegerProperty heightProperty() {
+        return height;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 }

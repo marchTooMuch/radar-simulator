@@ -2,23 +2,29 @@ package org.example;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.animation.AnimationTimer;
-import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -32,7 +38,7 @@ public class Buttons {
     public static List<InterceptorMissile> interceptors = new ArrayList<>();
     public static TextField targetInput;
     public static Arc safeModeArc;
-
+    public static TableView<AntiRadiationMissile> tableView;
     public static Button createSafeModeButton(StackPane root) {
         Button safeModeButton = new Button("SAFE MODE");
         safeModeButton.setStyle("""
@@ -154,7 +160,7 @@ public class Buttons {
                         m.update(dt,
                                 sector.getCenterX(),
                                 sector.getCenterY(),
-                                Buttons.radarOn, sector, interceptorLayer)
+                                Buttons.radarOn, sector, interceptorLayer, missileLayer)
                 );
 
                 Buttons.interceptors.removeIf(interceptor -> {
@@ -223,4 +229,64 @@ public class Buttons {
         delay.setOnFinished(e -> layer.getChildren().remove(explosion));
         delay.play();
     }
+
+    public static Button createTab76Button(StackPane rt) {
+        Button tab76 = new Button("TAB 76");
+        tab76.setOnAction(e -> {
+//            Stage stage = new Stage();
+//            VBox root = new VBox(Tab76.tab76);
+//            Scene scene = new Scene(root,300,200);
+//            stage.setScene(scene);
+//            stage.setTitle("TAB 76");
+//            stage.show();
+            Stage stage = new Stage();
+            TextField rangeField = new TextField();
+            Label rangeLabel = new Label("Range");
+            HBox rangeBox = new HBox(10, rangeLabel,rangeField);
+            Button selectTab = new Button("SELECT TAB");
+            selectTab.setOnAction(ok -> {
+                Tab76.range = Integer.parseInt(rangeField.getText());
+            });
+            stage.setTitle("TAB 76");
+            VBox root = new VBox(rangeBox,selectTab);
+            stage.setScene(new Scene(root, 250, 200));
+            stage.show();
+            });
+        rt.setAlignment(tab76, Pos.TOP_LEFT);
+        tab76.setPrefHeight(35);
+        tab76.setPrefWidth(140);
+        return tab76;
+    }
+
+    public static Button createTrackAmplificationButton(StackPane rt) {
+        Button trackAmplificationButton = new Button("Track Amplification");
+        trackAmplificationButton.setOnAction(e -> {
+            ObservableList<AntiRadiationMissile> list = FXCollections.observableArrayList(missiles);
+            tableView = new TableView<>();
+            TableColumn<AntiRadiationMissile, Integer> id = new TableColumn<>("id");
+            TableColumn<AntiRadiationMissile, Integer> rangeInKm = new TableColumn<>("range km");
+            TableColumn<AntiRadiationMissile, Integer> heightInKm = new TableColumn<>("height m");
+
+
+            id.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("id"));
+            rangeInKm.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("distanceInKm"));
+            heightInKm.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("height"));
+
+            tableView.getColumns().addAll(id, rangeInKm, heightInKm);
+            tableView.setItems(list);
+            Stage stage = new Stage();
+            VBox root = new VBox(tableView);
+            stage.setScene(new Scene(root, 400, 400));
+            stage.show();
+            for (AntiRadiationMissile m : list) {
+                System.out.println(m.distance);
+            }
+        });
+        rt.setAlignment(trackAmplificationButton, Pos.TOP_LEFT);
+        StackPane.setMargin(trackAmplificationButton, new Insets(35,0,0,0));
+        trackAmplificationButton.setPrefHeight(35);
+        trackAmplificationButton.setPrefWidth(140);
+        return trackAmplificationButton;
+    }
+
 }
