@@ -12,12 +12,6 @@ public class Sector {
     public static Arc create(Scene scene) {
         Arc sector = new Arc();
         sector = new Arc();
-
-        scene.setOnMouseMoved(e -> {
-            System.out.println("X: " + e.getX() + " Y: " + e.getY());
-        });
-
-
         sector.setStyle("-fx-background-color: transparent;");
 
         sector.setType(ArcType.ROUND);

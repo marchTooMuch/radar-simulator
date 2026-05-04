@@ -9,11 +9,11 @@ import javafx.scene.shape.Arc;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class ARM1 extends AntiRadiationMissile {
+public class ARM3 extends AntiRadiationMissile {
     int i = 0;
 
-    ARM1(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
-        super(x,y,view1,view2, view3, height, azimuth);
+    ARM3(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
+        super(x,y,view1,view2,view3,height, azimuth);
         speed = 4;
         speedKmPerSecond.setValue(1);
         targetCrossSection.setValue(0.1);
@@ -22,6 +22,37 @@ public class ARM1 extends AntiRadiationMissile {
     @Override
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
 
+        i++;
+        if(i>100000000) {
+            i = 0;
+        }
+        if(i%1000 == 0) {
+            int random = (int)(Math.random() * (1100 - 950 + 1)) + 950;
+            speedKmPerSecond.set(random);
+        }
+        double slope = (-14.0/1125) * (distanceInKm.getValue() - 75);
+        double angle = Math.toDegrees(Math.atan(slope));
+        diveAngle.setValue(angle);
+        if (height.getValue() > maxHeight) {
+            maxHeight = height.getValue();
+        }
+        double a = (-7.0/1125)*Math.pow((distanceInKm.getValue() - 75),2) + 35;
+        a*=1000;
+        height.setValue(a);
+        //System.out.println("Distance:"+ distanceInKm.getValue() + " Height:" + a);
+
+
+        if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
+            view.setVisible(false);
+            view = view2;
+            view.setVisible(true);
+        }
+        // distanceInKm.set((int)((600 * distance.get()) / 140));
+        distanceInKm.set((int)( (distance.get()) / 4 ));
+        if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
+            isEngaged = true;
+            AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
+        }
         double dx, dy;
         if (radarOn.get()) {
             label.setVisible(true);// радар включён
@@ -54,21 +85,21 @@ public class ARM1 extends AntiRadiationMissile {
         label.setTranslateY(y + 20);
         view.setTranslateX(x);
         view.setTranslateY(y);
-        view3.setTranslateX(x);
-        view3.setTranslateY(y);
         view.setRotate(Math.toDegrees(Math.atan2(dy, dx)));
         return false;
     }
 
 
     public static AntiRadiationMissile spawnMissileARM1(Pane missileLayer, Arc sector) {
-        double angle = 60 + 65 * Math.random();//Начальный угол 60(start angle + 15) конечный угол 125(start angle + 80)
-        System.out.println(angle);
+
+        double angle = sector.getStartAngle() + 10
+                + Math.random() * (sector.getLength() - 10);
+
         double x = sector.getCenterX()
-                + ((sector.getRadiusX()*(4.3/5)) ) * Math.cos(Math.toRadians(angle));
+                + (sector.getRadiusX() - 15) * Math.cos(Math.toRadians(angle));
 
         double y = sector.getCenterY()
-                - ((sector.getRadiusX()*(4.3/5)) )* Math.sin(Math.toRadians(angle));
+                - (sector.getRadiusY() - 15)* Math.sin(Math.toRadians(angle) );
 
         Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/arm.png"
         );
@@ -83,11 +114,9 @@ public class ARM1 extends AntiRadiationMissile {
         view.setPreserveRatio(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        view3.setFitWidth(28);
-        view3.setPreserveRatio(true);
-        ARM1 m = new ARM1(x, y, view, view2, view3,25000, angle);
+        ARM3 m = new ARM3(x, y, view, view2, view3,25000, angle);
 //        m.angle = angle;
-        missileLayer.getChildren().addAll(view,view2,view3);
+        missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);
         //создаем текст номера ракеты
         Text label = m.label;

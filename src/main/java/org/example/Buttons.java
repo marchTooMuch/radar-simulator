@@ -2,7 +2,6 @@ package org.example;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.beans.Observable;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -22,7 +21,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -241,15 +239,45 @@ public class Buttons {
 //            stage.show();
             Stage stage = new Stage();
             TextField rangeField = new TextField();
-            Label rangeLabel = new Label("Range");
-            HBox rangeBox = new HBox(10, rangeLabel,rangeField);
+            Label rangeLabel = new Label("Range     ");
+            HBox rangeBox = new HBox(30, rangeLabel,rangeField);
+
+
+            TextField heightField = new TextField();
+            Label heightLabel = new Label("Altitude  ");
+            HBox heightBox = new HBox(30,heightLabel, heightField);
+
+
+            TextField speedField = new TextField();
+            Label speedLabel = new Label("Speed               ");
+            HBox speedBox = new HBox(30,speedLabel, speedField);
+
+            TextField diveAngleField = new TextField();
+            Label diveAngleLabel = new Label("Dive angle          ");
+            HBox diveAngleBox = new HBox(30, diveAngleLabel,diveAngleField);
+
+            TextField approachAngleField = new TextField();
+            Label approachAngleLabel = new Label("Approach angle      ");
+            HBox approachAngleBox = new HBox(30, approachAngleLabel,approachAngleField);
+
+            TextField targetCrossSectionField = new TextField();
+            Label targetCrossSectionLabel = new Label("Target cross section");
+            HBox targetCrossSectionBox = new HBox(30, targetCrossSectionLabel,targetCrossSectionField);
+
+
+
             Button selectTab = new Button("SELECT TAB");
             selectTab.setOnAction(ok -> {
                 Tab76.range = Integer.parseInt(rangeField.getText());
+                Tab76.altitude = Integer.parseInt(heightField.getText());
+                Tab76.speed = Integer.parseInt(speedField.getText());
+                Tab76.diveAngle = Integer.parseInt(diveAngleField.getText());
+                Tab76.approachAngle = Integer.parseInt(approachAngleField.getText());
+                Tab76.targetCrossSeqtion = Integer.parseInt(targetCrossSectionField.getText());
             });
             stage.setTitle("TAB 76");
-            VBox root = new VBox(rangeBox,selectTab);
-            stage.setScene(new Scene(root, 250, 200));
+            VBox root = new VBox(rangeBox, heightBox, speedBox, diveAngleBox, approachAngleBox, targetCrossSectionBox, selectTab);
+            stage.setScene(new Scene(root, 500, 500));
             stage.show();
             });
         rt.setAlignment(tab76, Pos.TOP_LEFT);
@@ -264,19 +292,30 @@ public class Buttons {
             ObservableList<AntiRadiationMissile> list = FXCollections.observableArrayList(missiles);
             tableView = new TableView<>();
             TableColumn<AntiRadiationMissile, Integer> id = new TableColumn<>("id");
-            TableColumn<AntiRadiationMissile, Integer> rangeInKm = new TableColumn<>("range km");
-            TableColumn<AntiRadiationMissile, Integer> heightInKm = new TableColumn<>("height m");
+            TableColumn<AntiRadiationMissile, Integer> rangeInKm = new TableColumn<>("Range: km");
+            TableColumn<AntiRadiationMissile, Integer> heightInKm = new TableColumn<>("Height: m");
+            TableColumn<AntiRadiationMissile, Double> azimuth = new TableColumn<>("Azimuth: dgr");
+            TableColumn<AntiRadiationMissile, Double> speed = new TableColumn<>("Speed: m/s");
+            TableColumn<AntiRadiationMissile, Double> diveAngle = new TableColumn<>("Dive angle: dgr");
+            TableColumn<AntiRadiationMissile, Double> approachAngle = new TableColumn<>("Approach angle: dgr");
+            TableColumn<AntiRadiationMissile, Double> targetCrossSection = new TableColumn<>("Target cross section: sqm");
 
 
             id.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("id"));
             rangeInKm.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("distanceInKm"));
             heightInKm.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Integer>("height"));
+            azimuth.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("azimuth"));
+            speed.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("speedKmPerSecond"));
+            diveAngle.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("diveAngle"));
+            approachAngle.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("approachAngle"));
+            targetCrossSection.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("targetCrossSection"));
 
-            tableView.getColumns().addAll(id, rangeInKm, heightInKm);
+            tableView.getColumns().addAll(id, rangeInKm, heightInKm,azimuth,speed,diveAngle,approachAngle,targetCrossSection);
             tableView.setItems(list);
             Stage stage = new Stage();
+            stage.setTitle("Track");
             VBox root = new VBox(tableView);
-            stage.setScene(new Scene(root, 400, 400));
+            stage.setScene(new Scene(root, 800, 400));
             stage.show();
             for (AntiRadiationMissile m : list) {
                 System.out.println(m.distance);

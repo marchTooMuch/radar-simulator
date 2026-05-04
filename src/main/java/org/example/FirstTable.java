@@ -35,8 +35,8 @@ public class FirstTable {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        TextField ourRocketsField = new TextField("5");
-        TextField enemyRocketsField = new TextField("5");
+        TextField ourRocketsField = new TextField("0");
+        TextField enemyRocketsField = new TextField("1");
 
         grid.add(new javafx.scene.control.Label("Вражеских ракет:"), 0, 0);
         grid.add(ourRocketsField, 1, 0);
