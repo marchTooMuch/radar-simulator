@@ -18,7 +18,6 @@ public class AntiRadiationMissile {
     double speed = 1 ;
     ImageView view;
     ImageView view2;
-    ImageView view3;
     Text label;
     IntegerProperty distanceInKm = new SimpleIntegerProperty();
 //    double angle;    // угол в градусах
@@ -37,21 +36,17 @@ public class AntiRadiationMissile {
 
 
 
-    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, ImageView view3,int height, double azimuth) {
+    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2,int height, double azimuth) {
         this.x = x;
         this.y = y;
         this.view = view1;
         this.view2 = view2;
-        this.view3 = view3;
         view.setTranslateX(x);
         view.setTranslateY(y);
-        view3.setTranslateX(x);
-        view3.setTranslateY(y);
         id = count++;
         label = new Text(String.valueOf(id));
         label.setFill(Color.RED);
         label.setFont(Font.font(14));
-        this.height.setValue(height);
         this.azimuth.setValue(azimuth);
         approachAngle.setValue(0);
 
@@ -61,7 +56,7 @@ public class AntiRadiationMissile {
 
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
 
-
+        System.out.println("Hello from anti!");
         if(distanceInKm.getValue() <= Tab76.range ) {
             view.setVisible(false);
             view = view2;
@@ -133,7 +128,7 @@ public class AntiRadiationMissile {
         view.setPreserveRatio(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view, view2, view3,25000, angle);
+        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view, view2,25000, angle);
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);

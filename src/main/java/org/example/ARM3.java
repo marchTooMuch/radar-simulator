@@ -11,17 +11,35 @@ import javafx.scene.text.Text;
 
 public class ARM3 extends AntiRadiationMissile {
     int i = 0;
-
-    ARM3(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
-        super(x,y,view1,view2,view3,height, azimuth);
+    ARM3(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
+        super(x,y,view1,view2,height, azimuth);
         speed = 4;
         speedKmPerSecond.setValue(1);
         targetCrossSection.setValue(0.1);
+        this.height.setValue(height);
     }
 
     @Override
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-
+        height.setValue(1500);
+        diveAngle.setValue(0);
+//        if(distanceInKm.getValue() > 90) {
+//            view.setVisible(false);
+//            view3.setVisible(true);
+//        } else {
+//            view3.setVisible(false);
+//            view.setVisible(true);
+//        }
+        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
+        if(distanceInKm.getValue() <= 90) {
+            System.out.println("-----------------------------------------------------------------------");
+            double a = (-35.0/2025)*Math.pow((distanceInKm.getValue() - 45),2) + 35;
+            a*=1000;
+            height.setValue(a);
+            double slope = (-14.0/405) * (distanceInKm.getValue() - 45);
+            double angle = Math.toDegrees(Math.atan(slope));
+            diveAngle.setValue(angle);
+        }
         i++;
         if(i>100000000) {
             i = 0;
@@ -30,18 +48,10 @@ public class ARM3 extends AntiRadiationMissile {
             int random = (int)(Math.random() * (1100 - 950 + 1)) + 950;
             speedKmPerSecond.set(random);
         }
-        double slope = (-14.0/1125) * (distanceInKm.getValue() - 75);
-        double angle = Math.toDegrees(Math.atan(slope));
-        diveAngle.setValue(angle);
+
         if (height.getValue() > maxHeight) {
             maxHeight = height.getValue();
         }
-        double a = (-7.0/1125)*Math.pow((distanceInKm.getValue() - 75),2) + 35;
-        a*=1000;
-        height.setValue(a);
-        //System.out.println("Distance:"+ distanceInKm.getValue() + " Height:" + a);
-
-
         if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
             view.setVisible(false);
             view = view2;
@@ -92,29 +102,28 @@ public class ARM3 extends AntiRadiationMissile {
 
     public static AntiRadiationMissile spawnMissileARM1(Pane missileLayer, Arc sector) {
 
-        double angle = sector.getStartAngle() + 10
-                + Math.random() * (sector.getLength() - 10);
-
+        double angle = 60 + 65 * Math.random();//Начальный угол 60(start angle + 15) конечный угол 125(start angle + 80)
+        //System.out.println(angle);
         double x = sector.getCenterX()
-                + (sector.getRadiusX() - 15) * Math.cos(Math.toRadians(angle));
+                + ((sector.getRadiusX()*(4.3/5)) ) * Math.cos(Math.toRadians(angle));
 
         double y = sector.getCenterY()
-                - (sector.getRadiusY() - 15)* Math.sin(Math.toRadians(angle) );
+                - ((sector.getRadiusX()*(4.3/5)) )* Math.sin(Math.toRadians(angle));
 
-        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/arm.png"
+        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
         );
         Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
         );
-        Image img3 = new Image("E:/диплом/app/armSimulator/src/main/resources/plane.png"
-        );
+
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
-        ImageView view3 = new ImageView(img3);
+
         view.setFitWidth(28);
         view.setPreserveRatio(true);
+        view.setVisible(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        ARM3 m = new ARM3(x, y, view, view2, view3,25000, angle);
+        ARM3 m = new ARM3(x, y, view, view2,1500, angle);
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);

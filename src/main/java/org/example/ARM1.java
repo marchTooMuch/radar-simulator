@@ -12,8 +12,8 @@ import javafx.scene.text.Text;
 public class ARM1 extends AntiRadiationMissile {
     int i = 0;
 
-    ARM1(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
-        super(x,y,view1,view2, view3, height, azimuth);
+    ARM1(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
+        super(x,y,view1,view2, height, azimuth);
         speed = 4;
         speedKmPerSecond.setValue(1);
         targetCrossSection.setValue(0.1);
@@ -54,8 +54,6 @@ public class ARM1 extends AntiRadiationMissile {
         label.setTranslateY(y + 20);
         view.setTranslateX(x);
         view.setTranslateY(y);
-        view3.setTranslateX(x);
-        view3.setTranslateY(y);
         view.setRotate(Math.toDegrees(Math.atan2(dy, dx)));
         return false;
     }
@@ -63,7 +61,7 @@ public class ARM1 extends AntiRadiationMissile {
 
     public static AntiRadiationMissile spawnMissileARM1(Pane missileLayer, Arc sector) {
         double angle = 60 + 65 * Math.random();//Начальный угол 60(start angle + 15) конечный угол 125(start angle + 80)
-        System.out.println(angle);
+        //System.out.println(angle);
         double x = sector.getCenterX()
                 + ((sector.getRadiusX()*(4.3/5)) ) * Math.cos(Math.toRadians(angle));
 
@@ -85,7 +83,7 @@ public class ARM1 extends AntiRadiationMissile {
         view2.setPreserveRatio(true);
         view3.setFitWidth(28);
         view3.setPreserveRatio(true);
-        ARM1 m = new ARM1(x, y, view, view2, view3,25000, angle);
+        ARM1 m = new ARM1(x, y, view, view2,25000, angle);
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2,view3);
         view2.setVisible(false);
