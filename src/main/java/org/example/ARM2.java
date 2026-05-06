@@ -9,20 +9,22 @@ import javafx.scene.shape.Arc;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first grafic{
+public class ARM2 extends AntiRadiationMissile {// ARM3 is related to the first grafic{
     int i = 0;
-    ARM3(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
+    ARM2(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
         super(x,y,view1,view2,height, azimuth);
-        speed = 4;
-        speedKmPerSecond.setValue(1000);
-        targetCrossSection.setValue(0.1);
+        speed = 8;
+        speedKmPerSecond.setValue(2000);
+        targetCrossSection.setValue(0.6);
         this.height.setValue(height);
     }
 
     @Override
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-        height.setValue(1500);
-        diveAngle.setValue(0);
+        if (distanceInKm.getValue()>70) {
+            height.setValue(8000);
+        }
+//        diveAngle.setValue(0);
 //        if(distanceInKm.getValue() > 90) {
 //            view.setVisible(false);
 //            view3.setVisible(true);
@@ -30,13 +32,13 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
 //            view3.setVisible(false);
 //            view.setVisible(true);
 //        }
-        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
-        if(distanceInKm.getValue() <= 90) {
+        System.out.println("hi distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue() + "slope " + diveAngle.get());
+        if(distanceInKm.getValue() <= 70) {
             System.out.println("-----------------------------------------------------------------------");
-            double a = (-35.0/2025)*Math.pow((distanceInKm.getValue() - 45),2) + 35;
+            double a = distanceInKm.getValue() * 0.1142857142857143 ;
             a*=1000;
             height.setValue(a);
-            double slope = (-14.0/405) * (distanceInKm.getValue() - 45);
+            double slope = 0.1142857142857143;
             double angle = Math.toDegrees(Math.atan(slope));
             diveAngle.setValue(angle);
         }
@@ -45,7 +47,7 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
             i = 0;
         }
         if(i%1000 == 0) {
-            int random = (int)(Math.random() * (1100 - 950 + 1)) + 950;
+            int random = (int)(Math.random() * (400)) + 1800;
             speedKmPerSecond.set(random);
         }
 
@@ -123,7 +125,7 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         view.setVisible(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        ARM3 m = new ARM3(x, y, view, view2,1500, angle);
+        ARM2 m = new ARM2(x, y, view, view2,8000, angle);
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);

@@ -42,6 +42,7 @@ public class Main extends Application {
         Button trackAmplificationData = Buttons.createTrackAmplificationButton(root);
         Button createARM1 = createARM1Button(root, missileLayer, sector);
         Button createARM3 = createARM3Button(root, missileLayer, sector);
+        Button createARM2 = createARM2Button(root, missileLayer, sector);
 
         root.setStyle("-fx-background-color: black;");
         root.setAlignment(rocketsLabel, Pos.TOP_RIGHT);
@@ -52,7 +53,8 @@ public class Main extends Application {
         root.getChildren().addAll(missileLayer,interceptorLayer);
         root.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
         root.setAlignment(radarButton, Pos.BOTTOM_LEFT);
-        root.getChildren().addAll(radarButton,launchButton,safeModeButton,tab76Button, trackAmplificationData, createARM1, createARM3, object);
+        root.getChildren().addAll(radarButton,launchButton,safeModeButton,tab76Button,
+                trackAmplificationData, createARM1, createARM3, createARM2, object);
         Buttons.radarOnAddListener();
         AnimationTimer timer = Buttons.createTimer( sector, missileLayer, interceptorLayer);
         timer.start();
@@ -90,6 +92,17 @@ public class Main extends Application {
         button.setPrefHeight(40);
         button.setOnAction(e -> {
             Buttons.missiles.add(ARM3.spawnMissileARM1(misseleLayer, sector));
+        });
+        return button;
+    }
+    public static Button createARM2Button(StackPane sp, Pane misseleLayer, Arc sector) {
+        Button button = new Button("Create ARM2");
+        sp.setAlignment(button, Pos.TOP_LEFT);
+        sp.setMargin(button, new Insets(150,0,0,0));
+        button.setPrefHeight(40);
+        button.setPrefHeight(40);
+        button.setOnAction(e -> {
+            Buttons.missiles.add(ARM2.spawnMissileARM1(misseleLayer, sector));
         });
         return button;
     }
