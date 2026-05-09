@@ -6,6 +6,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -18,6 +20,7 @@ public class AntiRadiationMissile {
     double speed = 1 ;
     ImageView view;
     ImageView view2;
+    ImageView plane;
     Text label;
     IntegerProperty distanceInKm = new SimpleIntegerProperty();
 //    double angle;    // угол в градусах
@@ -29,14 +32,16 @@ public class AntiRadiationMissile {
     DoubleProperty diveAngle = new SimpleDoubleProperty();
     DoubleProperty approachAngle = new SimpleDoubleProperty();
     DoubleProperty targetCrossSection = new SimpleDoubleProperty();
-
     double lastDx = 0;
     double lastDy = 0;
     boolean isEngaged = false;
+    Line line;
+    Line arrow1;
+    Line arrow2;
+    Line cross;
 
 
-
-    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2,int height, double azimuth) {
+    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
         this.x = x;
         this.y = y;
         this.view = view1;
@@ -49,9 +54,7 @@ public class AntiRadiationMissile {
         label.setFont(Font.font(14));
         this.azimuth.setValue(azimuth);
         approachAngle.setValue(0);
-
-//        fraction = 1;
-
+//       fraction = 1;
     }
 
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
@@ -139,6 +142,7 @@ public class AntiRadiationMissile {
         label.setTranslateX(m.x);
         label.setTranslateY(m.y);
         missileLayer.getChildren().add(label);
+
         return m;
     }
     public static double getDistance(Arc sector, double x, double y) {
@@ -249,4 +253,5 @@ public class AntiRadiationMissile {
     public Integer getId() {
         return id;
     }
+
 }

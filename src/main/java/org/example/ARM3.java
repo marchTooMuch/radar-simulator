@@ -6,21 +6,71 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first grafic{
     int i = 0;
-    ARM3(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
+    ARM3(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
         super(x,y,view1,view2,height, azimuth);
         speed = 4;
         speedKmPerSecond.setValue(1000);
         targetCrossSection.setValue(0.1);
         this.height.setValue(height);
+        line = new Line();
+        line.setStartX(x);
+        line.setStartY(y);
+        line.setEndX(Main.sector.getCenterX());
+        line.setEndY(Main.sector.getCenterY());
+        line.setStrokeWidth(2);
+        line.setStroke(Color.RED);
+        line.getStrokeDashArray().addAll(5d,5d);
+        Main.missileLayer.getChildren().add(line);
+        double endX = line.getEndX();
+        double endY = line.getEndY();
+        double x1 = endX + 20;
+        double y1 = endY - 30;
+        double x2 = endX - 10;
+        double y2 = endY - 30;
+        double angle = Math.atan2(endY - y, endX - x);
+        double len = 20;
+        double alpha = Math.toRadians(25);
+        arrow1 = new Line();
+        arrow1.setStartX(endX);
+        arrow1.setStartY(endY);
+        arrow1.setEndX(endX - len * Math.cos(angle - alpha));
+        arrow1.setEndY(endY - len * Math.sin(angle - alpha));;
+        arrow1.setStrokeWidth(2);
+        arrow1.setStroke(Color.RED);
+        arrow2 = new Line();
+        arrow2.setStartX(endX);
+        arrow2.setStartY(endY);
+        arrow2.setEndX(endX - len * Math.cos(angle + alpha));
+        arrow2.setEndY(endY - len * Math.sin(angle + alpha));
+        arrow2.setStrokeWidth(2);
+        arrow2.setStroke(Color.RED);
+        cross = new Line();
+        cross.setStroke(Color.RED);
+        cross.setStrokeWidth(2);
+        double dx = endX - x;
+        double dy = endY - y;
+        double lenCross = 10;
+        double length = Math.sqrt(dx * dx + dy * dy);
+        double px = -dy / length;
+        double py = dx / length;
+        cross.setStartX(endX + px * lenCross);
+        cross.setStartY(endY + py * lenCross);
+        cross.setEndX(endX - px * lenCross);
+        cross.setEndY(endY - py * lenCross);
+        Main.missileLayer.getChildren().addAll(arrow1,arrow2,cross);
+        plane = view3;
+        Plane.spawnMissileARM1(x,y);
     }
 
     @Override
     boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+        System.out.println("List length " + Buttons.missiles.size());
         height.setValue(1500);
         diveAngle.setValue(0);
 //        if(distanceInKm.getValue() > 90) {
@@ -30,9 +80,9 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
 //            view3.setVisible(false);
 //            view.setVisible(true);
 //        }
-        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
+//        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
         if(distanceInKm.getValue() <= 90) {
-            System.out.println("-----------------------------------------------------------------------");
+//            System.out.println("-----------------------------------------------------------------------");
             double a = (-35.0/2025)*Math.pow((distanceInKm.getValue() - 45),2) + 35;
             a*=1000;
             height.setValue(a);
@@ -95,7 +145,8 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         label.setTranslateY(y + 20);
         view.setTranslateX(x);
         view.setTranslateY(y);
-        view.setRotate(Math.toDegrees(Math.atan2(dy, dx)));
+        line.setStartX(x + 15);
+        line.setStartY(y + 25);
         return false;
     }
 
@@ -114,16 +165,21 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         );
         Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
         );
+        Image img3 = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
+        );
 
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
+        ImageView view3 = new ImageView(img2);
 
         view.setFitWidth(28);
         view.setPreserveRatio(true);
         view.setVisible(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        ARM3 m = new ARM3(x, y, view, view2,1500, angle);
+        view3.setFitWidth(28);
+        view3.setPreserveRatio(true);
+        ARM3 m = new ARM3(x, y, view, view2,view3, 1500, angle);
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);
