@@ -16,59 +16,32 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
     boolean reverse = false;
     Plane(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
         super(x,y,view1,view2, height, azimuth);
-        speed = 100;
+        speed = 10;
         targetCrossSection.setValue(0.3);
         speedKmPerSecond.setValue(1500);
         this.angle = Math.toRadians(azimuth);
         this.targetAngle = angle;
-
     }
 
     @Override
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-        System.out.println("Hardcorrr!!!!");
-        //        diveAngle.setValue(0);
-//        if(distanceInKm.getValue() > 90) {
-//            view.setVisible(false);
-//            view3.setVisible(true);
-//        } else {
-//            view3.setVisible(false);
-//            view.setVisible(true);
-//        }
-//        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
-//        System.out.println("-----------------------------------------------------------------------");
-//        double a = (-0.0072*Math.pow((distanceInKm.getValue() - 50),2) + 18);
-//        a*=1000;
-//        height.setValue(a);
-//        double slope = (-0.0144) * (distanceInKm.getValue() - 50);
-//        double angle = Math.toDegrees(Math.atan(slope));
-//        diveAngle.setValue(angle);
-//        i++;
-//        if(i>100000000) {
-//            i = 0;
-//        }
-//        if(i%1000 == 0) {
-//            int random = (int)(Math.random() * (200)) + 1450;
-//            speedKmPerSecond.set(random);
-//        }
-//
-//        if (height.getValue() > maxHeight) {
-//            maxHeight = height.getValue();
-//        }
-//        if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
-//            view.setVisible(false);
-//            view = view2;
-//            view.setVisible(true);
-//        }
-//        // distanceInKm.set((int)((600 * distance.get()) / 140));
-//        distanceInKm.set((int)( (distance.get()) / 4 ));
-//        if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
-//            isEngaged = true;
-//            AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
-//        }
-        double speed = 30;
-        double turnSpeed = 0.02;
-
+    boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+        if(!radarOn){
+            label.setVisible(false);
+            view.setVisible(false);
+            view2.setVisible(false);
+        } else {
+            label.setVisible(true);
+            view.setVisible(true);
+            view2.setVisible(true);
+        }
+        double dx = (targetX - 15) - x;
+        double dy = (targetY - 20) - y;
+        distance.set(Math.sqrt(dx*dx + dy*dy));
+        distanceInKm.set((int)( (distance.get()) / 4 ));
+        azimuth.setValue(Math.round(getAzimuth(x,y)));
+        height.setValue(1500);
+        double speed = 3;
+        double turnSpeed = 0.001;
 // 1. один раз включаем разворот
         if (!reverse) {
             reverse = true;
@@ -92,7 +65,6 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
         label.setTranslateY(y + 20);
         view.setTranslateX(x);
         view.setTranslateY(y);
-        System.out.println("X: " + x + "Y: " + y);
         return false;
     }
 
@@ -120,7 +92,7 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
         label.setFont(Font.font(30));
         label.setTranslateX(m.x);
         label.setTranslateY(m.y);
-        Main.missileLayer.getChildren().add(label);
+        Main.missileLayer.getChildren().add(m.label);
         Buttons.missiles.add(m);
         return m;
     }
@@ -128,5 +100,11 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
         while (a > Math.PI) a -= 2 * Math.PI;
         while (a < -Math.PI) a += 2 * Math.PI;
         return a;
+    }
+    public double getAzimuth(double x, double y) {
+       double dx = x - Main.sector.getCenterX();
+       double dy = Main.sector.getCenterY() - y;
+       double angle = Math.toDegrees(Math.atan2(dy, dx));
+       return angle;
     }
 }

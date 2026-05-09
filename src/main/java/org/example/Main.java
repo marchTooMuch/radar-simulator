@@ -45,6 +45,8 @@ public class Main extends Application {
         Button createARM4 = createARM4Button(root, missileLayer, sector);
         Button createARM5 = createARM5Button(root, missileLayer, sector);
         Button createARM6 = createARM6Button(root, missileLayer, sector);
+        Button createJammer = createJammer(root, missileLayer, sector);
+        Button passiveSearch = Buttons.createPassiveSearchButton(root);
 
         root.setStyle("-fx-background-color: black;");
         root.setAlignment(rocketsLabel, Pos.TOP_RIGHT);
@@ -54,10 +56,10 @@ public class Main extends Application {
 
         root.getChildren().addAll(object, missileLayer,interceptorLayer);
         root.getChildren().addAll(radarButton,launchButton,safeModeButton,tab76Button,
-                trackAmplificationData, createARM1, createARM3, createARM2,createARM4,createARM5,createARM6);
+                trackAmplificationData, createARM1, createARM3, createARM2,createARM4,createARM5,createARM6,passiveSearch, createJammer);
         root.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
         root.setAlignment(radarButton, Pos.BOTTOM_LEFT);
-        Buttons.radarOnAddListener();
+       // Buttons.radarOnAddListener();
         AnimationTimer timer = Buttons.createTimer( sector, missileLayer, interceptorLayer);
         timer.start();
         Buttons.setOnActionlaunchRocket(launchButton,interceptorLayer,sector,rocketsLabel);
@@ -138,6 +140,17 @@ public class Main extends Application {
         button.setPrefHeight(40);
         button.setOnAction(e -> {
             Buttons.missiles.add(ARM6.spawnMissileARM1(misseleLayer, sector));
+        });
+        return button;
+    }
+    public static Button createJammer(StackPane sp, Pane misseleLayer, Arc sector) {
+        Button button = new Button("Create Jammer");
+        sp.setAlignment(button, Pos.TOP_LEFT);
+        sp.setMargin(button, new Insets(310,0,0,0));
+        button.setPrefHeight(40);
+        button.setPrefHeight(40);
+        button.setOnAction(e -> {
+            Jammer.createJammer();
         });
         return button;
     }

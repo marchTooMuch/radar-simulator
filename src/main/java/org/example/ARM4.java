@@ -20,7 +20,7 @@ public class ARM4 extends AntiRadiationMissile {// ARM3 is related to the first 
     }
 
     @Override
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+    boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
         if (distanceInKm.getValue()>70) {
             height.setValue(800);
         }
@@ -61,8 +61,12 @@ public class ARM4 extends AntiRadiationMissile {// ARM3 is related to the first 
         if (height.getValue() > maxHeight) {
             maxHeight = height.getValue();
         }
-        if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
-            view.setVisible(false);
+        if(distanceInKm.getValue() <= Tab76.range &&
+                maxHeight >= Tab76.altitude &&
+                Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
+                targetCrossSection.get()>= Tab76.targetCrossSeqtion
+                && approachAngle.get()<= Tab76.approachAngle
+                && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {            view.setVisible(false);
             view = view2;
             view.setVisible(true);
         }
@@ -73,7 +77,7 @@ public class ARM4 extends AntiRadiationMissile {// ARM3 is related to the first 
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
         double dx, dy;
-        if (radarOn.get()) {
+        if (radarOn) {
             label.setVisible(true);// радар включён
             dx = (targetX - 15) - x;
             dy = (targetY - 20) - y;

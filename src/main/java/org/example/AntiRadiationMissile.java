@@ -39,7 +39,7 @@ public class AntiRadiationMissile {
     Line arrow1;
     Line arrow2;
     Line cross;
-
+    Boolean isPlaneStrart = false;
 
     AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
         this.x = x;
@@ -57,7 +57,7 @@ public class AntiRadiationMissile {
 //       fraction = 1;
     }
 
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+    boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
 
         System.out.println("Hello from anti!");
         if(distanceInKm.getValue() <= Tab76.range ) {
@@ -72,7 +72,7 @@ public class AntiRadiationMissile {
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
         double dx, dy;
-        if (radarOn.get()) {
+        if (radarOn) {
             label.setVisible(true);// радар включён
             dx = (targetX - 15) - x;
             dy = (targetY - 20) - y;
@@ -153,7 +153,7 @@ public class AntiRadiationMissile {
     }
     public static void launchRocket(Pane interceptorLayer, Arc sector, int targetId) {
         System.out.println(targetId);
-        if (!Buttons.radarOn.get()) return;          // радар выключен
+        if (!Buttons.radarOn) return;          // радар выключен
         if (Buttons.missiles.isEmpty()) return;       // нет целей
         if (FirstTable.rocketsCount <= 0) return;        // нет ракет
         //int targetId = Integer.parseInt(Buttons.targetInput.getText());

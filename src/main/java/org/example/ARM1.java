@@ -22,7 +22,7 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
     }
 
     @Override
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+    boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
         diveAngle.setValue(0);
 //        if(distanceInKm.getValue() > 90) {
 //            view.setVisible(false);
@@ -51,7 +51,12 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
         if (height.getValue() > maxHeight) {
             maxHeight = height.getValue();
         }
-        if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
+        if(distanceInKm.getValue() <= Tab76.range &&
+                maxHeight >= Tab76.altitude &&
+                Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
+                targetCrossSection.get()>= Tab76.targetCrossSeqtion
+                && approachAngle.get()<= Tab76.approachAngle
+                && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
             view.setVisible(false);
             view = view2;
             view.setVisible(true);
@@ -63,8 +68,7 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
         double dx, dy;
-        if (radarOn.get()) {
-            label.setVisible(true);// радар включён
+      // радар включён
             dx = (targetX - 15) - x;
             dy = (targetY - 20) - y;
             distance.set(Math.sqrt(dx*dx + dy*dy));
@@ -79,11 +83,7 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
             // сохраняем последний вектор для инерции
             lastDx = dx;
             lastDy = dy;
-        } else { // радар выключен — летим по последнему вектору
-            dx = lastDx;
-            dy = lastDy;
-            label.setVisible(false);
-        }
+
 //        fraction -= speed * dt / sector.getRadiusY();
 //        if (fraction <= 0.5) return true;
 //        x = sector.getCenterX() + sector.getRadiusX() * fraction * Math.cos(Math.toRadians(angle));

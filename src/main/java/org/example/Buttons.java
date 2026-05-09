@@ -14,10 +14,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
@@ -30,9 +27,11 @@ import java.util.List;
 
 
 public class Buttons {
-    public static BooleanProperty radarOn = new SimpleBooleanProperty(true);
+    public static Boolean radarOn = true;
     public static BooleanProperty safeModeOn = new SimpleBooleanProperty(true);
-    public static List<AntiRadiationMissile> missiles = new ArrayList<>();
+    public static BooleanProperty passiveSearchOn = new SimpleBooleanProperty(true);
+    public static ObservableList<AntiRadiationMissile> missiles =  FXCollections.observableArrayList();
+    //public static List<AntiRadiationMissile> missiles = new ArrayList<>();
     public static List<InterceptorMissile> interceptors = new ArrayList<>();
     public static TextField targetInput;
     public static Arc safeModeArc;
@@ -113,31 +112,35 @@ public class Buttons {
 
     }
 
-    public static void radarOnAddListener() {
-        Buttons.radarOn.addListener((obs, oldVal, newVal) -> {
-
-            // скрываем / показываем ПРР
-            for (AntiRadiationMissile m : Buttons.missiles) {
-                m.view.setVisible(newVal);
-            }
-
-            // скрываем / показываем перехватчики
-            for (InterceptorMissile i : Buttons.interceptors) {
-                i.view.setVisible(newVal);
-            }
-        });
-    }
-
     public static void setOnActionRadarButton(Button radarButton) {
         radarButton.setOnAction(e -> {
-            Buttons.radarOn.set(!Buttons.radarOn.get());
-
-            if (Buttons.radarOn.get()) {
+            radarOn = !radarOn;
+            if (radarOn) {
+                System.out.println("Size is " + Buttons.missiles.size());
                 radarButton.setText("RADIATE");
                 radarButton.setStyle("-fx-background-color: darkgreen; -fx-text-fill: lime;");
+                for(AntiRadiationMissile m: Buttons.missiles) {
+                    m.view.setVisible(true);
+                    m.line.setVisible(true);
+                    m.cross.setVisible(true);
+                    m.arrow1.setVisible(true);
+                    m.arrow2.setVisible(true);
+                    m.label.setVisible(true);
+                }
+                for(Jammer j: Jammer.jammers) {
+                    j.view.setVisible(true);
+                }
             } else {
                 radarButton.setText("RADIATE");
                 radarButton.setStyle("-fx-background-color: darkred; -fx-text-fill: white;");
+                for(AntiRadiationMissile m: Buttons.missiles) {
+                    m.view.setVisible(false);
+                    m.line.setVisible(false);
+                    m.cross.setVisible(false);
+                    m.arrow1.setVisible(false);
+                    m.arrow2.setVisible(false);
+                    m.label.setVisible(false);
+                }
             }
         });
     }
@@ -155,7 +158,7 @@ public class Buttons {
                 double dt = (now - last) / 1e9;
                 last = now;
                 Buttons.missiles.removeIf(m ->
-                        m.update(dt,
+                        m.update(dt,g
                                 sector.getCenterX(),
                                 sector.getCenterY(),
                                 Buttons.radarOn, sector, interceptorLayer, missileLayer)
@@ -179,7 +182,7 @@ public class Buttons {
 
     public static void setOnActionlaunchRocket(Button launchButton, Pane interceptorLayer, Arc sector, Text rocketsLabel) {
         launchButton.setOnAction(e -> {
-            if (!Buttons.radarOn.get()) return;          // радар выключен
+            if (!Buttons.radarOn) return;          // радар выключен
             if (Buttons.missiles.isEmpty()) return;       // нет целей
             if (FirstTable.rocketsCount <= 0) return;        // нет ракет
             int targetId = Integer.parseInt(targetInput.getText());
@@ -248,13 +251,19 @@ public class Buttons {
             HBox heightBox = new HBox(30,heightLabel, heightField);
 
 
-            TextField speedField = new TextField();
+            TextField minSpeedField = new TextField();
+            TextField maxSpeedField = new TextField();
             Label speedLabel = new Label("Speed               ");
-            HBox speedBox = new HBox(30,speedLabel, speedField);
+            Label minSpeedLabel = new Label("min");
+            Label maxSpeedLabel = new Label("max");
+            HBox speedBox = new HBox(40,speedLabel, minSpeedLabel, minSpeedField, maxSpeedLabel, maxSpeedField);
 
-            TextField diveAngleField = new TextField();
-            Label diveAngleLabel = new Label("Dive angle          ");
-            HBox diveAngleBox = new HBox(30, diveAngleLabel,diveAngleField);
+            TextField minDiveAngleField = new TextField();
+            TextField maxDiveAngleField = new TextField();
+            Label diveAngleLabel = new Label("Dive angle              ");
+            Label minDiveAngleLabel = new Label("min");
+            Label maxDiveAngleLabel = new Label("max");
+            HBox diveAngleBox = new HBox(40,diveAngleLabel, minDiveAngleLabel, minDiveAngleField, maxDiveAngleLabel, maxDiveAngleField);
 
             TextField approachAngleField = new TextField();
             Label approachAngleLabel = new Label("Approach angle      ");
@@ -270,14 +279,16 @@ public class Buttons {
             selectTab.setOnAction(ok -> {
                 Tab76.range = Integer.parseInt(rangeField.getText());
                 Tab76.altitude = Integer.parseInt(heightField.getText());
-                Tab76.speed = Integer.parseInt(speedField.getText());
-                Tab76.diveAngle = Integer.parseInt(diveAngleField.getText());
+                Tab76.minSpeed = Integer.parseInt(minSpeedField.getText());
+                Tab76.maxSpeed = Integer.parseInt(maxSpeedField.getText());
+                Tab76.minDiveAngle = Integer.parseInt(minDiveAngleField.getText());
+                Tab76.maxDiveAngle = Integer.parseInt(maxDiveAngleField.getText());
                 Tab76.approachAngle = Integer.parseInt(approachAngleField.getText());
                 Tab76.targetCrossSeqtion = Integer.parseInt(targetCrossSectionField.getText());
             });
             stage.setTitle("TAB 76");
             VBox root = new VBox(rangeBox, heightBox, speedBox, diveAngleBox, approachAngleBox, targetCrossSectionBox, selectTab);
-            stage.setScene(new Scene(root, 500, 500));
+            stage.setScene(new Scene(root, 650, 250));
             stage.show();
             });
         rt.setAlignment(tab76, Pos.TOP_LEFT);
@@ -289,8 +300,8 @@ public class Buttons {
     public static Button createTrackAmplificationButton(StackPane rt) {
         Button trackAmplificationButton = new Button("Track Amplification");
         trackAmplificationButton.setOnAction(e -> {
-            ObservableList<AntiRadiationMissile> list = FXCollections.observableArrayList(missiles);
             tableView = new TableView<>();
+            tableView.setItems(missiles);
             TableColumn<AntiRadiationMissile, Integer> id = new TableColumn<>("id");
             TableColumn<AntiRadiationMissile, Integer> rangeInKm = new TableColumn<>("Range: km");
             TableColumn<AntiRadiationMissile, Integer> heightInKm = new TableColumn<>("Height: m");
@@ -311,21 +322,48 @@ public class Buttons {
             targetCrossSection.setCellValueFactory(new PropertyValueFactory<AntiRadiationMissile, Double>("targetCrossSection"));
 
             tableView.getColumns().addAll(id, rangeInKm, heightInKm,azimuth,speed,diveAngle,approachAngle,targetCrossSection);
-            tableView.setItems(list);
             Stage stage = new Stage();
             stage.setTitle("Track");
             VBox root = new VBox(tableView);
             stage.setScene(new Scene(root, 800, 400));
             stage.show();
-            for (AntiRadiationMissile m : list) {
-                System.out.println(m.distance);
-            }
         });
         rt.setAlignment(trackAmplificationButton, Pos.TOP_LEFT);
         StackPane.setMargin(trackAmplificationButton, new Insets(35,0,0,0));
         trackAmplificationButton.setPrefHeight(35);
         trackAmplificationButton.setPrefWidth(140);
         return trackAmplificationButton;
+    }
+    public static Button createPassiveSearchButton(StackPane root) {
+        Button passiveSearch = new Button("PASSIVE SEARCH");
+        passiveSearch.setOnAction(event -> {
+            Buttons.passiveSearchOn.set(!Buttons.passiveSearchOn.get());
+            if (Buttons.passiveSearchOn.get()) {
+                passiveSearch.setText("PASSIVE SEARCH");
+                passiveSearch.setStyle("-fx-background-color: darkgreen; -fx-text-fill: lime;");
+                for(Jammer j: Jammer.jammers) {
+                    j.view.setVisible(true);
+                }
+            } else {
+                passiveSearch.setText("PASSIVE SEARCH");
+                passiveSearch.setStyle("-fx-background-color: darkred; -fx-text-fill: white;");
+                for(Jammer j: Jammer.jammers) {
+                    if(!radarOn)
+                    j.view.setVisible(false);
+                }
+            }
+        });
+        passiveSearch.setStyle("""
+        -fx-background-color: darkgreen;
+        -fx-text-fill: lime;
+        -fx-font-size: 16px;
+        """);
+        passiveSearch.setPrefWidth(200);
+        passiveSearch.setPrefHeight(50);
+        root.setAlignment(passiveSearch, Pos.BOTTOM_RIGHT);
+        root.setMargin(passiveSearch, new Insets(0,0,120,0) );
+        targetInput.setMaxWidth(200);
+        return passiveSearch;
     }
 
 }

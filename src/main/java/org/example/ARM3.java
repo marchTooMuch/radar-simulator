@@ -65,12 +65,19 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         cross.setEndY(endY - py * lenCross);
         Main.missileLayer.getChildren().addAll(arrow1,arrow2,cross);
         plane = view3;
-        Plane.spawnMissileARM1(x,y);
     }
 
     @Override
-    boolean update(double dt, double targetX, double targetY, BooleanProperty radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-        System.out.println("List length " + Buttons.missiles.size());
+    boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+        if(!radarOn){
+            label.setVisible(false);
+            view.setVisible(false);
+            view2.setVisible(false);
+        } else {
+            label.setVisible(true);
+            view.setVisible(true);
+            view2.setVisible(true);
+        }
         height.setValue(1500);
         diveAngle.setValue(0);
 //        if(distanceInKm.getValue() > 90) {
@@ -81,7 +88,12 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
 //            view.setVisible(true);
 //        }
 //        System.out.println("distance " + distanceInKm.getValue() + "heigth " + heightProperty().getValue());
-        if(distanceInKm.getValue() <= 90) {
+        if(distanceInKm.getValue() <= 90 && distanceInKm.getValue() != 0) {
+            if(!isPlaneStrart) {
+                System.out.println("distance:" + distanceInKm.getValue());
+                Plane.spawnMissileARM1(x,y);
+                isPlaneStrart = true;
+            }
 //            System.out.println("-----------------------------------------------------------------------");
             double a = (-35.0/2025)*Math.pow((distanceInKm.getValue() - 45),2) + 35;
             a*=1000;
@@ -102,7 +114,12 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         if (height.getValue() > maxHeight) {
             maxHeight = height.getValue();
         }
-        if(distanceInKm.getValue() <= Tab76.range && maxHeight >= Tab76.altitude && Math.abs(diveAngle.get())>=Tab76.diveAngle && targetCrossSection.get()>= Tab76.targetCrossSeqtion && approachAngle.get()<= Tab76.approachAngle && speedKmPerSecond.get()>= Tab76.speed) {
+        if(distanceInKm.getValue() <= Tab76.range &&
+                maxHeight >= Tab76.altitude &&
+                Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
+                targetCrossSection.get()>= Tab76.targetCrossSeqtion
+                && approachAngle.get()<= Tab76.approachAngle
+                && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
             view.setVisible(false);
             view = view2;
             view.setVisible(true);
@@ -114,7 +131,7 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
         double dx, dy;
-        if (radarOn.get()) {
+        if (radarOn) {
             label.setVisible(true);// радар включён
             dx = (targetX - 15) - x;
             dy = (targetY - 20) - y;
