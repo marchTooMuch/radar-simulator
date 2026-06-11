@@ -2,6 +2,8 @@ package org.example;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +12,10 @@ import java.util.Random;
 public class Jammer {
     ImageView view;
     public static List<Jammer> jammers = new ArrayList<>();
-
-    Jammer(ImageView view) {
+    Line line;
+    Jammer(ImageView view, Line line) {
         this.view = view;
+        this.line = line;
     }
 
     public static void createJammer() {
@@ -20,19 +23,32 @@ public class Jammer {
         //System.out.println(angle);
         double d = new Random().nextDouble();
         double x = Main.sector.getCenterX()
-                + ((Main.sector.getRadiusX()*(d)) ) * Math.cos(Math.toRadians(angle));
+                + ((Main.sector.getRadiusX()) ) * Math.cos(Math.toRadians(angle));
 
         double y = Main.sector.getCenterY()
-                - ((Main.sector.getRadiusX()*(4.3/5)) )* Math.sin(Math.toRadians(angle));
+                - ((Main.sector.getRadiusY()) )* Math.sin(Math.toRadians(angle));
         Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/jammer.png");
         ImageView view = new ImageView(img);
-        Jammer jam = new Jammer(view);
+        Line line = new Line();
+        Jammer jam = new Jammer(view, line);
         jammers.add(jam);
         view.setFitWidth(28);
         view.setPreserveRatio(true);
-        view.setVisible(true);
+        if(Buttons.radarOn){
+            jam.view.setVisible(true);
+            jam.line.setVisible(true);
+        } else {
+            jam.view.setVisible(false);
+            jam.line.setVisible(false);
+        }
         view.setX(x);
         view.setY(y);
-        Main.missileLayer.getChildren().add(view);
+        line.setStartX(x + 15);
+        line.setStartY(y + 25);
+        line.setEndX(Main.sector.getCenterX());
+        line.setEndY(Main.sector.getCenterY());
+        line.setStrokeWidth(2);
+        line.setStroke(Color.WHITE);
+        Main.missileLayer.getChildren().addAll(view,line);
     }
 }

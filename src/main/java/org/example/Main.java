@@ -5,9 +5,12 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
@@ -17,6 +20,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import static org.example.Labels.rocketsLabel;
+import static org.example.Labels.tab1Label;
 
 public class Main extends Application {
     static StackPane root = new StackPane();//
@@ -26,14 +30,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+
         Images.createGraphicImage();
-        Tab76.range = -1;
         Polygon object = Object.getPolygon();
         root.setAlignment(object, Pos.BOTTOM_CENTER);
         root.setMargin(object,new Insets(0.0,0.0,70.0,15.0));
-        FirstTable.createTable1();
         rocketsLabel = Labels.createRocketsLabel();
         Pane interceptorLayer = new Pane();
+        missileLayer.setMouseTransparent(true);
+        interceptorLayer.setMouseTransparent(true);
         Button launchButton = Buttons.createLaunchButton(root);
         Button radarButton = Buttons.createRadarButton();
         Button safeModeButton = Buttons.createSafeModeButton(root);
@@ -47,6 +52,8 @@ public class Main extends Application {
         Button createARM6 = createARM6Button(root, missileLayer, sector);
         Button createJammer = createJammer(root, missileLayer, sector);
         Button passiveSearch = Buttons.createPassiveSearchButton(root);
+        Button carmMode = Buttons.createCarmMode(root);
+        Button epr = createEprRocketButton();
 
         root.setStyle("-fx-background-color: black;");
         root.setAlignment(rocketsLabel, Pos.TOP_RIGHT);
@@ -56,7 +63,9 @@ public class Main extends Application {
 
         root.getChildren().addAll(object, missileLayer,interceptorLayer);
         root.getChildren().addAll(radarButton,launchButton,safeModeButton,tab76Button,
-                trackAmplificationData, createARM1, createARM3, createARM2,createARM4,createARM5,createARM6,passiveSearch, createJammer);
+                trackAmplificationData, createARM1, createARM3,
+                createARM2,createARM4,createARM5,createARM6,
+                passiveSearch, createJammer, carmMode, epr);
         root.setAlignment(launchButton, Pos.BOTTOM_RIGHT);
         root.setAlignment(radarButton, Pos.BOTTOM_LEFT);
        // Buttons.radarOnAddListener();
@@ -67,12 +76,10 @@ public class Main extends Application {
         Buttons.createSafeModeArc(radarLayer.radarLayer, sector);
         Buttons.setOnActionSafeButton(safeModeButton,radarLayer.radarLayer);
 
-        ObservableList<RadarStat> radarStats = FXCollections.observableArrayList();
-        radarStats.add(new RadarStat("Ракет в запасе", "5"));
-        for (int i = 0; i < FirstTable.setup.getKey(); i++) {
-            Buttons.missiles.add(AntiRadiationMissile.spawnMissile(missileLayer, sector));
-        }
-        stage.setTitle("Панель ЗРК — сектор стрельбы");
+        scene.setOnMouseClicked(e -> {
+            Buttons.targetInput.requestFocus();
+        });
+        stage.setTitle("Панель ЗРК");
         stage.setScene(scene);
         stage.show();
     }
@@ -151,6 +158,63 @@ public class Main extends Application {
         button.setPrefHeight(40);
         button.setOnAction(e -> {
             Jammer.createJammer();
+        });
+        return button;
+    }
+    public static Button createEprRocketButton() {
+        Label label = new Label("Добавити ракету та змінити ЕПР");
+        label.setStyle(
+                "-fx-font-size: 14px;" +
+                        "-fx-text-fill: red;" +
+                        "-fx-font-weight: bold;"
+        );
+        root.setAlignment(label,Pos.TOP_RIGHT);
+        StackPane.setMargin(label,new Insets(70, 0,0,0));
+        root.getChildren().add(label);
+        Button button = new Button();
+        button.setPrefHeight(20);
+        button.setPrefWidth(100);
+        root.setAlignment(button, Pos.TOP_RIGHT);
+        root.setMargin(button, new Insets(100,0,0,0));
+
+        button.setOnAction(e -> {
+            Stage stage = new Stage();
+            stage.setTitle("");
+            VBox root = new VBox(10);
+            Scene scene = new Scene(root,400,200);
+            stage.setScene(scene);
+            stage.show();
+            HBox hBox1 = new HBox(10);
+            Label labelAddButton = new Label("Add rocket");
+            labelAddButton.setStyle(
+                    "-fx-font-size: 14px;" +
+                            "-fx-text-fill: red;" +
+                            "-fx-font-weight: bold;"
+            );
+            Button addRocket = new Button("+");
+            addRocket.setPrefWidth(50);
+            addRocket.setPrefHeight(50);
+            hBox1.getChildren().addAll(labelAddButton, addRocket);
+            root.getChildren().addAll(hBox1);
+            addRocket.setOnAction(event -> {
+                FirstTable.rocketsCount++;
+                rocketsLabel.setText("Rockets count " + FirstTable.rocketsCount);
+            });
+            HBox hBox = new HBox(10);
+            Label EprLabel = new Label("Enter cross section");
+            EprLabel.setStyle(
+                    "-fx-font-size: 14px;" +
+                            "-fx-text-fill: red;" +
+                            "-fx-font-weight: bold;"
+            );
+            TextField epr = new TextField();
+            Button enter = new Button("CHANGE");
+            hBox.getChildren().addAll(EprLabel,epr,enter);
+            enter.setOnAction(event -> {
+                AntiRadiationMissile.EPR = Double.parseDouble(epr.getText());
+                System.out.println(AntiRadiationMissile.EPR);
+            });
+            root.getChildren().addAll(hBox);
         });
         return button;
     }

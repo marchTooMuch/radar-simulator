@@ -9,13 +9,12 @@ import java.util.Objects;
 
 public class InterceptorMissile {
     double x, y;
-    double speed = 100;
+    static double speed = 10;
     ImageView view;
     AntiRadiationMissile target;
-
+    boolean isSafeMode = true;
     double lastDx = 0;
     double lastDy = 0;
-
 
     InterceptorMissile(double x, double y,
                        ImageView view,
@@ -24,13 +23,14 @@ public class InterceptorMissile {
         this.y = y;
         this.view = view;
         this.target = target;
-
         view.setTranslateX(x);
         view.setTranslateY(y);
     }
 
     boolean update(double dt) {
-        if (target == null) return true;
+        if (target == null) {
+            target.interceptPoint.setVisible(false);
+            return true;}
 
         double dx = target.x - x;
         double dy = target.y - y;
@@ -65,13 +65,14 @@ public class InterceptorMissile {
         );
 
         ImageView view = new ImageView(img);
-        view.setFitWidth(24);
+        view.setFitWidth(32);
         view.setPreserveRatio(true);
 
         InterceptorMissile m =
                 new InterceptorMissile(x, y, view, target);
-
+        m.target.interceptor = m;
         interceptorLayer.getChildren().add(view);
         return m;
     }
+
 }

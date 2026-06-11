@@ -13,28 +13,19 @@ public class RadarLayer {
     private static final int SECTOR_ANGLE = 90;
     private static final int LINES_COUNT = 5;
     private static final int MAX_DISTANCE_KM = 140;
-
     Pane radarLayer;
     Arc sector;
-    Pane root;
-
     RadarLayer(Scene scene, Arc sector) {
         radarLayer = new Pane();
         this.sector = sector;
         addLines();
     }
-
     private void addLines() {
-
         radarLayer.getChildren().add(sector);
         double startAngle = 90 - SECTOR_ANGLE / 2;
-
         for (int i = 1; i <= LINES_COUNT; i++) {
-
             double fraction = i / (double) LINES_COUNT;
             double distance = MAX_DISTANCE_KM * fraction;
-
-            // ---- дуга расстояния
             Arc rangeArc = new Arc();
             rangeArc.setType(ArcType.OPEN);
             rangeArc.setStartAngle(startAngle);
@@ -42,31 +33,24 @@ public class RadarLayer {
             rangeArc.setFill(Color.TRANSPARENT);
             rangeArc.setStroke(Color.WHITE);
             rangeArc.setStrokeWidth(1);
-
             rangeArc.centerXProperty().bind(sector.centerXProperty());
             rangeArc.centerYProperty().bind(sector.centerYProperty());
             rangeArc.radiusXProperty().bind(sector.radiusXProperty().multiply(fraction));
             rangeArc.radiusYProperty().bind(sector.radiusYProperty().multiply(fraction));
-
             radarLayer.getChildren().add(rangeArc);
-
-            // ---- подпись расстояния
             Text label = new Text(String.format("%.0f km", distance));
             label.setFont(Font.font(14));
             label.setFill(Color.WHITE);
-
-            // точка начала дуги (ГЕОМЕТРИЧЕСКИ ВЕРНО)
             label.xProperty().bind(
                     Bindings.createDoubleBinding(
                             () -> sector.getCenterX()
                                     + rangeArc.getRadiusX()
                                     * Math.cos(Math.toRadians(startAngle))
-                                    + 5, // отступ от линии
+                                    + 5,
                             sector.centerXProperty(),
                             rangeArc.radiusXProperty()
                     )
             );
-
             label.yProperty().bind(
                     Bindings.createDoubleBinding(
                             () -> sector.getCenterY()
@@ -76,7 +60,6 @@ public class RadarLayer {
                             rangeArc.radiusYProperty()
                     )
             );
-
             radarLayer.getChildren().add(label);
         }
     }

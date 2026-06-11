@@ -14,10 +14,10 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
     double angle = 0;
     double targetAngle;
     boolean reverse = false;
-    Plane(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
-        super(x,y,view1,view2, height, azimuth);
+    Plane(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
+        super(x,y,view1,view2, view3,height, azimuth,"Plane");
         speed = 10;
-        targetCrossSection.setValue(0.3);
+        targetCrossSection.setValue(15);
         speedKmPerSecond.setValue(1500);
         this.angle = Math.toRadians(azimuth);
         this.targetAngle = angle;
@@ -25,7 +25,7 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
 
     @Override
     boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-        if(!radarOn){
+        if(!radarOn || Buttons.passiveSearchOn.get()){
             label.setVisible(false);
             view.setVisible(false);
             view2.setVisible(false);
@@ -78,11 +78,13 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
         );
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
+        ImageView view3 = new ImageView(new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
+        ));
         view.setFitWidth(28);
         view.setPreserveRatio(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        Plane m = new Plane(x, y, view, view2,25000, angle);
+        Plane m = new Plane(x, y, view, view2, view3, 25000, angle);
 //        m.angle = angle;
         Main.missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);

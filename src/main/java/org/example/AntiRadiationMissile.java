@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
@@ -13,6 +14,7 @@ import javafx.scene.text.Text;
 
 
 public class AntiRadiationMissile {
+    public static double EPR = 15;
     int maxHeight = 0 ;
     public static int count = 1;
     int id;
@@ -23,8 +25,6 @@ public class AntiRadiationMissile {
     ImageView plane;
     Text label;
     IntegerProperty distanceInKm = new SimpleIntegerProperty();
-//    double angle;    // угол в градусах
-//    double fraction;
     DoubleProperty distance = new SimpleDoubleProperty();
     IntegerProperty height = new SimpleIntegerProperty();
     DoubleProperty azimuth = new SimpleDoubleProperty();
@@ -32,6 +32,7 @@ public class AntiRadiationMissile {
     DoubleProperty diveAngle = new SimpleDoubleProperty();
     DoubleProperty approachAngle = new SimpleDoubleProperty();
     DoubleProperty targetCrossSection = new SimpleDoubleProperty();
+    StringProperty targetType = new SimpleStringProperty() ;
     double lastDx = 0;
     double lastDy = 0;
     boolean isEngaged = false;
@@ -40,8 +41,10 @@ public class AntiRadiationMissile {
     Line arrow2;
     Line cross;
     Boolean isPlaneStrart = false;
+    Line interceptPoint;
+    InterceptorMissile interceptor;
 
-    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, int height, double azimuth) {
+    AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth, String type) {
         this.x = x;
         this.y = y;
         this.view = view1;
@@ -54,6 +57,9 @@ public class AntiRadiationMissile {
         label.setFont(Font.font(14));
         this.azimuth.setValue(azimuth);
         approachAngle.setValue(0);
+        plane = view3;
+        this.targetType.set("Plane");
+        this.setTargetCrossSection(EPR);
 //       fraction = 1;
     }
 
@@ -131,7 +137,7 @@ public class AntiRadiationMissile {
         view.setPreserveRatio(true);
         view2.setFitWidth(28);
         view2.setPreserveRatio(true);
-        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view, view2,25000, angle);
+        AntiRadiationMissile m = new AntiRadiationMissile(x, y, view, view2, view3,25000, angle,"Base");
 //        m.angle = angle;
         missileLayer.getChildren().addAll(view,view2);
         view2.setVisible(false);
@@ -165,7 +171,8 @@ public class AntiRadiationMissile {
                 break;
             }
         }
-        Buttons.interceptors.add(InterceptorMissile.spawnInterceptor(interceptorLayer, sector, target));
+        InterceptorMissile im = InterceptorMissile.spawnInterceptor(interceptorLayer, sector, target);
+        Buttons.interceptors.add(im);
         // уменьшаем количество ракет
         FirstTable.rocketsCount--;
         Labels.rocketsLabel.setText("Ракет в запасе: " + FirstTable.rocketsCount);
@@ -198,6 +205,9 @@ public class AntiRadiationMissile {
     public Double getTargetCrossSection() {
         return targetCrossSection.get();
     }
+    public String getTargetType() {
+        return targetType.get();
+    }
 
     public void setDistance(double value) {
         distance.set(value);
@@ -223,6 +233,10 @@ public class AntiRadiationMissile {
     public void setTargetCrossSection(double value) {
         targetCrossSection.set(value);
     }
+    public void setTargetType(String value) {
+        targetType.set(value);
+    }
+
 
 
     public DoubleProperty distanceProperty() {
@@ -249,7 +263,9 @@ public class AntiRadiationMissile {
     public DoubleProperty targetCrossSectionProperty() {
         return targetCrossSection;
     }
-
+    public StringProperty targetTypeProperty() {
+        return targetType;
+    }
     public Integer getId() {
         return id;
     }
