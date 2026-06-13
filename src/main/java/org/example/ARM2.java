@@ -11,9 +11,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class ARM2 extends AntiRadiationMissile {// ARM2 is related to the third grafic{
+
+    ImageView view3 ;
     int i = 0;
     ARM2(double x, double y, ImageView view1, ImageView view2, ImageView view3,int height, double azimuth) {
         super(x,y,view1,view2,view3,height, azimuth,"ARM3");
+        this.view3 = view1;
         speed = 4;
         speedKmPerSecond.setValue(2000);
         targetCrossSection.setValue(AntiRadiationMissile.EPR);
@@ -136,27 +139,31 @@ public class ARM2 extends AntiRadiationMissile {// ARM2 is related to the third 
         }
         if (Buttons.tab1Yes) {
             if(distanceInKm.getValue() <= Tab76.range &&
-                    maxHeight <= Tab76.altitude &&
+                    height.getValue() <= Tab76.altitude &&
                     Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
                     targetCrossSection.get()>= Tab76.targetCrossSeqtion
                     && approachAngle.get()>= Tab76.approachAngle
                     && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
                 view.setVisible(false);
                 view = view2;
+//                if(!isMessageShowed){
+//                    isMessageShowed = true;
+//                    Alert alert = new Alert(Alert.AlertType.WARNING);
+//                    alert.setTitle("Попередження");
+//                    alert.setHeaderText("Помічено ПРР!");
+//                    alert.setContentText("Увімкніть CARM MODE");
+//                    alert.show();
+//                }
                 view.setVisible(true);
-            }
-        }
-        if (Buttons.tab1Yes) {
-            if(distanceInKm.getValue() <= Tab76.range &&
-                    maxHeight <= Tab76.altitude &&
-                    Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
-                    targetCrossSection.get()>= Tab76.targetCrossSeqtion
-                    && approachAngle.get()>= Tab76.approachAngle
-                    && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
+            } else {
                 view.setVisible(false);
-                view = view2;
+                view = view3;
                 view.setVisible(true);
             }
+        } else {
+            view.setVisible(false);
+            view = view3;
+            view.setVisible(true);
         }
         distanceInKm.set((int)( (distance.get()) / 4 ));
         if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {

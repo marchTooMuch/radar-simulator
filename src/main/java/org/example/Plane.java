@@ -72,10 +72,8 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
     public static AntiRadiationMissile spawnMissileARM1(double x, double y) {
         double angle = 60 + 65 * Math.random();//Начальный угол 60(start angle + 15) конечный угол 125(start angle + 80)
         //System.out.println(angle);
-        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
-        );
-        Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
-        );
+        Image img = new Image(ClassLoader.getSystemResourceAsStream("aerodynamic.png"));
+        Image img2 = new Image(ClassLoader.getSystemResourceAsStream("arm_defined.png"));
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
         ImageView view3 = new ImageView(new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"

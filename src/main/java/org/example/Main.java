@@ -24,13 +24,14 @@ import static org.example.Labels.tab1Label;
 
 public class Main extends Application {
     static StackPane root = new StackPane();//
-    static Scene scene = new Scene(root, 1000, 700);
-    static Arc sector = Sector.create(scene);
+    static Scene scene ;
+    static Arc sector ;
     static Pane missileLayer = new Pane();
 
     @Override
     public void start(Stage stage) {
-
+        scene = new Scene(root, 1000, 700);
+        sector = Sector.create(scene);
         Images.createGraphicImage();
         Polygon object = Object.getPolygon();
         root.setAlignment(object, Pos.BOTTOM_CENTER);
@@ -204,7 +205,7 @@ public class Main extends Application {
             Label EprLabel = new Label("Enter cross section");
             EprLabel.setStyle(
                     "-fx-font-size: 14px;" +
-                            "-fx-text-fill: red;" +
+                            "-fx-text-fill: red;"+
                             "-fx-font-weight: bold;"
             );
             TextField epr = new TextField();
@@ -218,4 +219,8 @@ public class Main extends Application {
         });
         return button;
     }
+    public static void main(String args[]) {
+        launch(args);
+    }
+
 }

@@ -116,18 +116,31 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
         }
         if (Buttons.tab1Yes) {
             if(distanceInKm.getValue() <= Tab76.range &&
-                    maxHeight <= Tab76.altitude &&
+                    height.getValue() <= Tab76.altitude &&
                     Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
                     targetCrossSection.get()>= Tab76.targetCrossSeqtion
                     && approachAngle.get()>= Tab76.approachAngle
                     && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
                 view.setVisible(false);
-                view3 = view;
                 view = view2;
+//                if(!isMessageShowed){
+//                    isMessageShowed = true;
+//                    Alert alert = new Alert(Alert.AlertType.WARNING);
+//                    alert.setTitle("Попередження");
+//                    alert.setHeaderText("Помічено ПРР!");
+//                    alert.setContentText("Увімкніть CARM MODE");
+//                    alert.show();
+//                }
+                view.setVisible(true);
+            } else {
+                view.setVisible(false);
+                view = view3;
                 view.setVisible(true);
             }
         } else {
             view.setVisible(false);
+            view = view3;
+            view.setVisible(true);
         }
         distanceInKm.set((int)( (distance.get()) / 4 ));
         if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
@@ -164,10 +177,8 @@ public class ARM1 extends AntiRadiationMissile { // ARM1 is related to the secon
         double y = sector.getCenterY()
                 - ((sector.getRadiusX()*(4.4/5)) )* Math.sin(Math.toRadians(angle));
 
-        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
-        );
-        Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
-        );
+        Image img = new Image(ClassLoader.getSystemResourceAsStream("aerodynamic.png"));
+        Image img2 = new Image(ClassLoader.getSystemResourceAsStream("arm_defined.png"));
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
         ImageView view3 = new ImageView(new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"

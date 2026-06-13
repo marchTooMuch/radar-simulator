@@ -124,11 +124,9 @@ public class AntiRadiationMissile {
         double y = sector.getCenterY()
                 - (sector.getRadiusY() - 15)* Math.sin(Math.toRadians(angle) );
 
-        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/arm.png"
-        );
-        Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
-        );
-        Image img3 = new Image("E:/диплом/app/armSimulator/src/main/resources/plane.png"
+        Image img = new Image(ClassLoader.getSystemResourceAsStream("aerodynamic.png"));
+        Image img2 = new Image(ClassLoader.getSystemResourceAsStream("arm_defined.png"));
+        Image img3 = new Image(ClassLoader.getSystemResourceAsStream("aerodynamic.png")
         );
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);

@@ -14,9 +14,11 @@ import javafx.scene.text.Text;
 
 public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first grafic{
     int i = 0;
+    ImageView view3 ;
     boolean isMessageShowed = false;
     ARM3(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth) {
         super(x,y,view1,view2,view3,height, azimuth,"ARM1");
+        this.view3 = view1;
         speed = 4;//normal speed 4
         speedKmPerSecond.setValue(1000);
         this.height.setValue(height);
@@ -103,16 +105,24 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
                     && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
                 view.setVisible(false);
                 view = view2;
-                if(!isMessageShowed){
-                    isMessageShowed = true;
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Попередження");
-                    alert.setHeaderText("Помічено ПРР!");
-                    alert.setContentText("Увімкніть CARM MODE");
-                    alert.show();
-                }
+//                if(!isMessageShowed){
+//                    isMessageShowed = true;
+//                    Alert alert = new Alert(Alert.AlertType.WARNING);
+//                    alert.setTitle("Попередження");
+//                    alert.setHeaderText("Помічено ПРР!");
+//                    alert.setContentText("Увімкніть CARM MODE");
+//                    alert.show();
+//                }
+                view.setVisible(true);
+            } else {
+                view.setVisible(false);
+                view = view3;
                 view.setVisible(true);
             }
+        } else {
+            view.setVisible(false);
+            view = view3;
+            view.setVisible(true);
         }
         distanceInKm.set((int)( (distance.get()) / 4 ));
         if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
@@ -188,12 +198,8 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         double y = sector.getCenterY()
                 - ((sector.getRadiusX()*(4.3/5)) )* Math.sin(Math.toRadians(angle));
 
-        Image img = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
-        );
-        Image img2 = new Image("E:/диплом/app/armSimulator/src/main/resources/arm_defined.png"
-        );
-        Image img3 = new Image("E:/диплом/app/armSimulator/src/main/resources/aerodynamic.png"
-        );
+        Image img = new Image(ClassLoader.getSystemResourceAsStream("aerodynamic.png"));
+        Image img2 = new Image(ClassLoader.getSystemResourceAsStream("arm_defined.png"));
 
         ImageView view = new ImageView(img);
         ImageView view2 = new ImageView(img2);
