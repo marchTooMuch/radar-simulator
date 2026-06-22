@@ -45,28 +45,6 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
 
     @Override
     boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
-        if(!radarOn || Buttons.passiveSearchOn.get()){
-            view.setVisible(false);
-            line.setVisible(false);
-            cross.setVisible(false);
-            arrow1.setVisible(false);
-            arrow2.setVisible(false);
-            label.setVisible(false);
-            interceptPoint.setVisible(false);
-        } else {
-            view.setVisible(true);
-            line.setVisible(true);
-            cross.setVisible(true);
-            arrow1.setVisible(true);
-            arrow2.setVisible(true);
-            label.setVisible(true);
-            if(isPlaneStrart) {
-                interceptPoint.setVisible(true);
-            }
-        }
-        if(!isPlaneStrart) {
-            this.interceptPoint.setVisible(false);
-        }
         height.setValue(1500);
         diveAngle.setValue(0);
         if(distanceInKm.getValue() <= 90 && distanceInKm.getValue() != 0) {
@@ -96,67 +74,97 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         if (height.getValue() > maxHeight) {
             maxHeight = height.getValue();
         }
-        if (Buttons.tab1Yes) {
-            if(distanceInKm.getValue() <= Tab76.range &&
-                    height.getValue() <= Tab76.altitude &&
-                    Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
-                    targetCrossSection.get()>= Tab76.targetCrossSeqtion
-                    && approachAngle.get()>= Tab76.approachAngle
-                    && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
-                view.setVisible(false);
-                view = view2;
-//                if(!isMessageShowed){
-//                    isMessageShowed = true;
-//                    Alert alert = new Alert(Alert.AlertType.WARNING);
-//                    alert.setTitle("Попередження");
-//                    alert.setHeaderText("Помічено ПРР!");
-//                    alert.setContentText("Увімкніть CARM MODE");
-//                    alert.show();
-//                }
-                view.setVisible(true);
+        if (isPlaneStrart) {
+            if (Buttons.tab1Yes) {
+                if(distanceInKm.getValue() <= Tab76.range &&
+                        height.getValue() <= Tab76.altitude &&
+                        Math.abs(diveAngle.get())>=Tab76.minDiveAngle && Math.abs(diveAngle.get())<=Tab76.maxDiveAngle &&
+                        targetCrossSection.get()>= Tab76.targetCrossSeqtion
+                        && approachAngle.get()>= Tab76.approachAngle
+                        && speedKmPerSecond.get()>= Tab76.minSpeed && speedKmPerSecond.get()<= Tab76.maxSpeed) {
+                    view.setVisible(false);
+                    view = view2;
+    //                if(!isMessageShowed){
+    //                    isMessageShowed = true;
+    //                    Alert alert = new Alert(Alert.AlertType.WARNING);
+    //                    alert.setTitle("Попередження");
+    //                    alert.setHeaderText("Помічено ПРР!");
+    //                    alert.setContentText("Увімкніть CARM MODE");
+    //                    alert.show();
+    //                }
+                } else {
+                    view.setVisible(false);
+                    view = view3;
+                }
             } else {
                 view.setVisible(false);
                 view = view3;
-                view.setVisible(true);
             }
-        } else {
-            view.setVisible(false);
-            view = view3;
-            view.setVisible(true);
         }
         distanceInKm.set((int)( (distance.get()) / 4 ));
         if(Buttons.safeModeOn.get() == false && distance.get() <= 300 && isEngaged == false && FirstTable.rocketsCount > 0) {
             isEngaged = true;
             AntiRadiationMissile.launchRocket(interceptorLayer, sector, id);
         }
-            double dx, dy;
-            dx = (targetX - 15) - x;
-            dy = (targetY - 20) - y;
-            distance.set(Math.sqrt(dx*dx + dy*dy));
+        double dx, dy;
+        dx = (targetX - 15) - x;
+        dy = (targetY - 20) - y;
+        distance.set(Math.sqrt(dx*dx + dy*dy));
 
-            //if(id == 1)
-            //System.out.println("ID:" + id + " X:" + x + " Y:" + y + " Distance(dx*dx + dy*dy):" + distance.get() + " targetX:" + (targetX - 15) + " targetY:" + (targetY - 20));
-            if (distance.get() < 10) {
-                distanceInKm.set(0);height.setValue(0);
-                if(!Buttons.isCarmModeOn) {
-                    Alert alret = new Alert(Alert.AlertType.CONFIRMATION);
-                    alret.setHeaderText("You didnt turn on CARM MODE");
-                    alret.show();
-                }
-                return true;}; // ракета достигла цели
-            if(interceptor == null) {
-
+        //if(id == 1)
+        //System.out.println("ID:" + id + " X:" + x + " Y:" + y + " Distance(dx*dx + dy*dy):" + distance.get() + " targetX:" + (targetX - 15) + " targetY:" + (targetY - 20));
+        if (distance.get() < 10) {
+            distanceInKm.set(0);height.setValue(0);
+            if(!Buttons.isCarmModeOn) {
+                Alert alret = new Alert(Alert.AlertType.CONFIRMATION);
+                alret.setHeaderText("You didnt turn on CARM MODE");
+                alret.show();
             }
-            dx /= distance.get();
-            dy /= distance.get();
-            drawInterceptPoint(dx, dy);
-            x += dx * speed * dt;
-            y += dy * speed * dt;
-            label.setTranslateX(x + 20); // 10 px справа от ракеты
-            label.setTranslateY(y + 20);
-            view.setTranslateX(x);
-            view.setTranslateY(y);
-            return false;
+            return true;}; // ракета достигла цели
+        if(interceptor == null) {
+
+        }
+        dx /= distance.get();
+        dy /= distance.get();
+        drawInterceptPoint(dx, dy);
+        x += dx * speed * dt;
+        y += dy * speed * dt;
+        label.setTranslateX(x + 20); // 10 px справа от ракеты
+        label.setTranslateY(y + 20);
+        view.setTranslateX(x);
+        view.setTranslateY(y);
+        if(isEngaged){
+            hexagon.setVisible(true);
+            udateFrameCoord();
+        } else {
+            hexagon.setVisible(false);
+        }
+        if(!radarOn || Buttons.passiveSearchOn.get()){
+            view.setVisible(false);
+            line.setVisible(false);
+            cross.setVisible(false);
+            arrow1.setVisible(false);
+            arrow2.setVisible(false);
+            label.setVisible(false);
+            interceptPoint.setVisible(false);
+            hexagon.setVisible(false);
+        } else {
+            view.setVisible(true);
+            line.setVisible(true);
+            cross.setVisible(true);
+            arrow1.setVisible(true);
+            arrow2.setVisible(true);
+            label.setVisible(true);
+            hexagon.setVisible(true);
+            if(isPlaneStrart) {
+                interceptPoint.setVisible(true);
+            }
+        }
+        if(!isPlaneStrart) {
+            this.interceptPoint.setVisible(false);
+        }
+        autoEngage();
+        return false;
     }
     public void calculateLine() {
         line.setStartX(x + 15 );
@@ -226,39 +234,76 @@ public class ARM3 extends AntiRadiationMissile {// ARM3 is related to the first 
         return m;
     }
     public void drawInterceptPoint(double dx, double dy) {
-        double time = distance.get()/InterceptorMissile.speed;
-        double futureX = x + dx * speed * (time - 5);
-        double futureY = y + dy * speed * (time - 5);
-        double px = -dy ;
-        double py = dx;
-        int lineLength = 10;
-        int ang;
-        if(azimuth.get()<=90) {
-            ang = 20;
-        } else if(azimuth.get()<=70){
-            ang = 40;
-        } else if(azimuth.get()>=110){
-            ang = 5;
-        } else{
-            ang = 10;
-        }
+        double time = distance.get()/InterceptorMissile.speed;//distance = 130
 
-        if(interceptor == null) {
-            interceptPoint.setStartX(
-                    futureX  + px * lineLength + ang
-            );
+        if (distance.get()>=130) {
+            double futureX = x + dx * speed * (time - 5);
+            double futureY = y + dy * speed * (time - 5);
+            double px = -dy ;
+            double py = dx;
+            int lineLength = 10;
+            int ang;
+            if(azimuth.get()<=90) {
+                ang = 20;
+            } else if(azimuth.get()<=70){
+                ang = 40;
+            } else if(azimuth.get()>=110){
+                ang = 5;
+            } else{
+                ang = 10;
+            }
 
-            interceptPoint.setStartY(
-                    futureY + py * lineLength
-            );
+            if(interceptor == null) {
+                interceptPoint.setStartX(
+                        futureX  + px * lineLength + ang
+                );
 
-            interceptPoint.setEndX(
-                    futureX  - px * lineLength + ang
-            );
+                interceptPoint.setStartY(
+                        futureY + py * lineLength
+                );
 
-            interceptPoint.setEndY(
-                    futureY  - py * lineLength
-            );
+                interceptPoint.setEndX(
+                        futureX  - px * lineLength + ang
+                );
+
+                interceptPoint.setEndY(
+                        futureY  - py * lineLength
+                );
+            }
+        } else {
+            double futureX = x + dx * 30;
+            double futureY = y + dy * 30;
+            double px = -dy ;
+            double py = dx;
+            int lineLength = 10;
+            int ang;
+            if(azimuth.get()<=90) {
+                ang = 20;
+            } else if(azimuth.get()<=70){
+                ang = 40;
+            } else if(azimuth.get()>=110){
+                ang = 5;
+            } else{
+                ang = 10;
+            }
+
+            if(interceptor == null) {
+                interceptPoint.setStartX(
+                        futureX  + px * lineLength + ang
+                );
+
+                interceptPoint.setStartY(
+                        futureY + py * lineLength
+                );
+
+                interceptPoint.setEndX(
+                        futureX  - px * lineLength + ang
+                );
+
+                interceptPoint.setEndY(
+                        futureY  - py * lineLength
+                );
+            }
         }
     }
 

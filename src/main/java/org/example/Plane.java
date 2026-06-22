@@ -25,6 +25,9 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
 
     @Override
     boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
+        if(distance.get() > 550) {
+            return true;
+        }
         if(!radarOn || Buttons.passiveSearchOn.get()){
             label.setVisible(false);
             view.setVisible(false);
@@ -65,6 +68,12 @@ public class Plane extends AntiRadiationMissile { // ARM1 is related to the seco
         label.setTranslateY(y + 20);
         view.setTranslateX(x);
         view.setTranslateY(y);
+        if(isEngaged){
+            hexagon.setVisible(true);
+            udateFrameCoord();
+        } else {
+            hexagon.setVisible(false);
+        }
         return false;
     }
 

@@ -39,7 +39,6 @@ public class Buttons {
     //public static List<AntiRadiationMissile> missiles = new ArrayList<>();
     public static List<InterceptorMissile> interceptors = new ArrayList<>();
     public static TextField targetInput;
-    public static Arc safeModeArc;
     public static TableView<AntiRadiationMissile> tableView;
     public static boolean tab1Yes = false;
     public static boolean tab1No = true;
@@ -85,32 +84,14 @@ public class Buttons {
         return radarButton;
     }
 
-
-    public static void createSafeModeArc(Pane radarLayer, Arc sector) {
-        safeModeArc = new Arc();
-        safeModeArc.setType(ArcType.OPEN);
-        safeModeArc.setStartAngle(45);
-        safeModeArc.setLength(90);
-        safeModeArc.setFill(Color.TRANSPARENT);
-        safeModeArc.setStroke(Color.RED);
-        safeModeArc.setStrokeWidth(1);
-        safeModeArc.centerXProperty().bind(sector.centerXProperty());
-        safeModeArc.centerYProperty().bind(sector.centerYProperty());
-        safeModeArc.radiusXProperty().bind(sector.radiusXProperty().multiply(0.47));
-        safeModeArc.radiusYProperty().bind(sector.radiusYProperty().multiply(0.47));
-    }
-
-
     public static void setOnActionSafeButton(Button safeButton, Pane radarLayer) {
         safeButton.setOnAction(e -> {
             if (Buttons.safeModeOn.get()) {
                 safeButton.setText("SAFE STATE");
-                safeButton.setStyle("-fx-background-color: darkgreen; -fx-text-fill: lime;");
-                radarLayer.getChildren().add(safeModeArc);
+                safeButton.setStyle("-fx-background-color: darkred; -fx-text-fill: white;");
             } else {
                 safeButton.setText("SAFE STATE");
-                safeButton.setStyle("-fx-background-color: darkred; -fx-text-fill: white;");
-                radarLayer.getChildren().remove(safeModeArc);
+                safeButton.setStyle("-fx-background-color: darkgreen; -fx-text-fill: white;");
             }
             Buttons.safeModeOn.set(!Buttons.safeModeOn.get());
         });
@@ -135,6 +116,9 @@ public class Buttons {
                     m.arrow2.setVisible(false);
                     if(m.label != null)
                     m.label.setVisible(false);
+                    if(m.hexagon != null){
+                        m.hexagon.setVisible(false);
+                    }
                 }
                 for(Jammer j: Jammer.jammers) {
                     j.view.setVisible(false);
@@ -158,6 +142,9 @@ public class Buttons {
                             m.arrow2.setVisible(false);
                         if(m.label != null)
                             m.label.setVisible(false);
+                        if(m.hexagon != null){
+                            m.hexagon.setVisible(false);
+                        }
                     }
                     for(Jammer j: Jammer.jammers) {
                         j.view.setVisible(true);
@@ -177,6 +164,12 @@ public class Buttons {
                             m.arrow2.setVisible(true);
                         if(m.label != null)
                             m.label.setVisible(true);
+                        if(m.hexagon != null){
+                            m.hexagon.setVisible(true);
+                        }
+                        if(m.interceptPoint != null) {
+                            m.interceptPoint.setVisible(false);
+                        }
                     }
                     for(Jammer j: Jammer.jammers) {
                         j.view.setVisible(true);
@@ -199,30 +192,47 @@ public class Buttons {
 
                 double dt = (now - last) / 1e9;
                 last = now;
-                Buttons.missiles.removeIf(m ->
-                        m.update(dt,
-                                sector.getCenterX(),
-                                sector.getCenterY(),
-                                Buttons.radarOn, sector, interceptorLayer, missileLayer)
-                );
+                for(AntiRadiationMissile m : Buttons.missiles) {
+                    if(m.update(dt,
+                            sector.getCenterX(),
+                            sector.getCenterY(),
+                            Buttons.radarOn, sector, interceptorLayer, missileLayer)) {
+                        Buttons.missiles.remove(m);
+                        if(m.view != null)
+                            m.view.setVisible(false);
+                        if(m.line != null)
+                            m.line.setVisible(false);
+                        if(m.cross != null)
+                            m.cross.setVisible(false);
+                        if(m.arrow1 != null)
+                            m.arrow1.setVisible(false);
+                        if(m.arrow2 != null)
+                            m.arrow2.setVisible(false);
+                        if(m.label != null)
+                            m.label.setVisible(false);
+                        if(m.hexagon != null){
+                            m.hexagon.setVisible(false);
+                        }
+                        if(m.interceptPoint != null) {
+                            m.interceptPoint.setVisible(false);
+                        }
+                    }
+                }
+//                Buttons.missiles.removeIf(m ->
+//                        m.update(dt,
+//                                sector.getCenterX(),
+//                                sector.getCenterY(),
+//                                Buttons.radarOn, sector, interceptorLayer, missileLayer)
+//                );
 
                 Buttons.interceptors.removeIf(interceptor -> {
                     boolean hit = interceptor.update(dt);
                     if (hit && interceptor.target != null) {
-                        if(!interceptor.isSafeMode){
                             missileLayer.getChildren()
-                                    .removeAll(interceptor.target.view,interceptor.target.label, interceptor.target.view2, interceptor.target.line, interceptor.target.arrow1, interceptor.target.arrow2, interceptor.target.line,interceptor.target.interceptPoint, interceptor.target.cross);
+                                    .removeAll(interceptor.target.view,interceptor.target.label, interceptor.target.view2, interceptor.target.line, interceptor.target.arrow1, interceptor.target.arrow2, interceptor.target.line,interceptor.target.interceptPoint, interceptor.target.cross, interceptor.target.hexagon);
                             Buttons.missiles.remove(interceptor.target);
                             Buttons.showExplosion(interceptorLayer, interceptor.x, interceptor.y);
-                        }
-                        if (!(interceptor.target instanceof ARM2) && !(interceptor.target instanceof ARM4)&& !(interceptor.target instanceof ARM5)&&!(interceptor.target instanceof ARM6)) {
-                            missileLayer.getChildren()
-                                    .removeAll(interceptor.target.view,interceptor.target.label, interceptor.target.view2, interceptor.target.line, interceptor.target.arrow1, interceptor.target.arrow2, interceptor.target.line,interceptor.target.interceptPoint, interceptor.target.cross);
-                            Buttons.missiles.remove(interceptor.target);
-                            Buttons.showExplosion(interceptorLayer, interceptor.x, interceptor.y);
-                            interceptor.target.interceptPoint.setVisible(false);
-                        }
-                        interceptorLayer.getChildren().remove(interceptor.view);
+                            interceptorLayer.getChildren().remove(interceptor.view);
                     }
                     return hit;
                 });
@@ -240,6 +250,7 @@ public class Buttons {
             for (AntiRadiationMissile m : missiles) {
                 if (m.id == targetId) {
                     target = m;
+                    m.isEngaged = true;
                     break;
                 }
             }
@@ -286,6 +297,8 @@ public class Buttons {
         Button tab76 = new Button("TAB 76");
         tab76.setOnAction(e -> {
             Stage stage = new Stage();
+            stage.setX(700);
+            stage.setY(400);
             TextField rangeField = new TextField(String.valueOf(Tab76.range));
             Label rangeLabel = new Label("Range     ");
             Button showGraphic = new Button("SHOW");
@@ -411,6 +424,8 @@ public class Buttons {
 
             tableView.getColumns().addAll(id, rangeInKm, heightInKm,azimuth,speed,diveAngle,approachAngle,targetCrossSection,targetType);
             Stage stage = new Stage();
+            stage.setX(700);
+            stage.setY(0);
             stage.setTitle("Track");
             VBox root = new VBox(tableView);
             stage.setScene(new Scene(root, 900, 400));

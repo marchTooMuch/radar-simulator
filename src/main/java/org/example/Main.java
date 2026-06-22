@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -14,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.collections.FXCollections;
@@ -27,17 +29,19 @@ public class Main extends Application {
     static Scene scene ;
     static Arc sector ;
     static Pane missileLayer = new Pane();
+    static Pane interceptorLayer = new Pane();
+    static Rectangle2D bounds;
 
     @Override
     public void start(Stage stage) {
         scene = new Scene(root, 1000, 700);
         sector = Sector.create(scene);
         Images.createGraphicImage();
+        bounds = Screen.getPrimary().getVisualBounds();
         Polygon object = Object.getPolygon();
         root.setAlignment(object, Pos.BOTTOM_CENTER);
         root.setMargin(object,new Insets(0.0,0.0,70.0,15.0));
         rocketsLabel = Labels.createRocketsLabel();
-        Pane interceptorLayer = new Pane();
         missileLayer.setMouseTransparent(true);
         interceptorLayer.setMouseTransparent(true);
         Button launchButton = Buttons.createLaunchButton(root);
@@ -74,13 +78,14 @@ public class Main extends Application {
         timer.start();
         Buttons.setOnActionlaunchRocket(launchButton,interceptorLayer,sector,rocketsLabel);
         Buttons.setOnActionRadarButton(radarButton);
-        Buttons.createSafeModeArc(radarLayer.radarLayer, sector);
         Buttons.setOnActionSafeButton(safeModeButton,radarLayer.radarLayer);
 
         scene.setOnMouseClicked(e -> {
             Buttons.targetInput.requestFocus();
         });
         stage.setTitle("Панель ЗРК");
+        stage.setY(0);
+        stage.setX(0);
         stage.setScene(scene);
         stage.show();
     }
@@ -163,7 +168,7 @@ public class Main extends Application {
         return button;
     }
     public static Button createEprRocketButton() {
-        Label label = new Label("Добавити ракету та змінити ЕПР");
+        Label label = new Label("Add rockets and change cross section");
         label.setStyle(
                 "-fx-font-size: 14px;" +
                         "-fx-text-fill: red;" +

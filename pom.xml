@@ -1,48 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.example</groupId>
-    <artifactId>javafx-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javafx.version>20.0.2</javafx.version>
-    </properties>
-
-    <dependencies>
-        <!-- Основные модули JavaFX -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Плагин для запуска JavaFX через Maven -->
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>org.example.Main</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project><!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
+<!--<project xmlns="http://maven.apache.org/POM/4.0.0"-->
 <!--         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
 <!--         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0-->
 <!--                             http://maven.apache.org/xsd/maven-4.0.0.xsd">-->
@@ -75,50 +31,96 @@
 
 <!--    <build>-->
 <!--        <plugins>-->
-<!--            &lt;!&ndash; 1. Плагин для сборки полноценного JAR-файла со всеми зависимостями &ndash;&gt;-->
+<!--            &lt;!&ndash; Плагин для запуска JavaFX через Maven &ndash;&gt;-->
 <!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-shade-plugin</artifactId>-->
-<!--                <version>3.5.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <transformers>-->
-<!--                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-<!--                                    &lt;!&ndash; Укажите ваш главный класс (через точки) &ndash;&gt;-->
-<!--                                    <mainClass>org.example.Launcher</mainClass>-->
-<!--                                </transformer>-->
-<!--                            </transformers>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
-<!--            &lt;!&ndash; 2. Плагин для создания .exe из этого JAR &ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>com.github.akman</groupId>-->
-<!--                <artifactId>jpackage-maven-plugin</artifactId>-->
-<!--                <version>0.1.5</version>-->
+<!--                <groupId>org.openjfx</groupId>-->
+<!--                <artifactId>javafx-maven-plugin</artifactId>-->
+<!--                <version>0.0.8</version>-->
 <!--                <configuration>-->
-<!--                    <type>IMAGE</type> &lt;!&ndash; Сначала соберем просто папку с .exe для проверки &ndash;&gt;-->
-<!--                    <input>${project.build.directory}</input>-->
-<!--                    <mainjar>${project.build.finalName}.jar</mainjar>-->
-<!--                    <mainclass>org.example.Launcher</mainclass> &lt;!&ndash; Укажите ваш класс &ndash;&gt;-->
-<!--                    <name>armSimulator</name>-->
+<!--                    <mainClass>org.example.Main</mainClass>-->
 <!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>jpackage</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
 <!--            </plugin>-->
 <!--        </plugins>-->
 <!--    </build>-->
 <!--</project>-->
+
+        <project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>javafx-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>20.0.2</javafx.version>
+    </properties>
+
+    <dependencies>
+        <!-- Основные модули JavaFX -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 1. Плагин для сборки полноценного JAR-файла со всеми зависимостями -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <!-- Укажите ваш главный класс (через точки) -->
+                                    <mainClass>org.example.Launcher</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 2. Плагин для создания .exe из этого JAR -->
+            <plugin>
+                <groupId>com.github.akman</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>0.1.5</version>
+                <configuration>
+                    <type>IMAGE</type> <!-- Сначала соберем просто папку с .exe для проверки -->
+                    <input>${project.build.directory}</input>
+                    <mainjar>${project.build.finalName}.jar</mainjar>
+                    <mainclass>org.example.Launcher</mainclass> <!-- Укажите ваш класс -->
+                    <name>armSimulator</name>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

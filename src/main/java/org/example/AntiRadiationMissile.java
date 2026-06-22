@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 
 
 public class AntiRadiationMissile {
+    ImageView view3;
     public static double EPR = 15;
     int maxHeight = 0 ;
     public static int count = 1;
@@ -43,6 +44,7 @@ public class AntiRadiationMissile {
     Boolean isPlaneStrart = false;
     Line interceptPoint;
     InterceptorMissile interceptor;
+    Polygon hexagon;
 
     AntiRadiationMissile(double x, double y, ImageView view1, ImageView view2, ImageView view3, int height, double azimuth, String type) {
         this.x = x;
@@ -53,14 +55,18 @@ public class AntiRadiationMissile {
         view.setTranslateY(y);
         id = count++;
         label = new Text(String.valueOf(id));
-        label.setFill(Color.RED);
+        label.setFill(Color.WHITE);
         label.setFont(Font.font(14));
         this.azimuth.setValue(azimuth);
         approachAngle.setValue(0);
         plane = view3;
         this.targetType.set("Plane");
         this.setTargetCrossSection(EPR);
-//       fraction = 1;
+        hexagon = new Polygon();
+        hexagon.setFill(Color.TRANSPARENT);
+        hexagon.setStroke(Color.RED);
+        hexagon.setStrokeWidth(1);
+        Main.missileLayer.getChildren().add(hexagon);
     }
 
     boolean update(double dt, double targetX, double targetY, Boolean radarOn, Arc sector, Pane interceptorLayer, Pane missileLayer) {
@@ -141,7 +147,7 @@ public class AntiRadiationMissile {
         view2.setVisible(false);
         //создаем текст номера ракеты
         Text label = m.label;
-        label.setFill(Color.RED);
+        label.setFill(Color.WHITE);
         label.setFont(Font.font(30));
         label.setTranslateX(m.x);
         label.setTranslateY(m.y);
@@ -178,7 +184,22 @@ public class AntiRadiationMissile {
         FirstTable.radarStats.get(0).value = String.valueOf(FirstTable.rocketsCount);
         FirstTable.radarStats.set(0, FirstTable.radarStats.get(0)); // триггер для TableView
     }
-
+    public void udateFrameCoord() {
+        double radius = 20;
+        hexagon.getPoints().clear();
+        for (int i = 0; i < 6; i++) {
+            double angle = Math.toRadians(i * 60 - 30);
+            double pointX = x + 15 + radius * Math.cos(angle);
+            double pointY = y + 15 + radius * Math.sin(angle);
+            hexagon.getPoints().addAll(pointX,pointY);
+        }
+    }
+    public void autoEngage() {
+        if(Buttons.safeModeOn.get() == false  && isEngaged == false && FirstTable.rocketsCount > 0) {
+            isEngaged = true;
+            AntiRadiationMissile.launchRocket(Main.interceptorLayer, Main.sector, id);
+        }
+    }
     public Double getDistance() {
         return distance.get();
     }
